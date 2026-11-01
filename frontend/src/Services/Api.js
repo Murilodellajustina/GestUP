@@ -78,3 +78,27 @@ export async function buscarPerfilUsuario() {
         throw new Error("Erro ao buscar dados do usuário");
     }
 }
+
+async function requisicaoEventos(path = '', options = {}) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:8000/eventos${path}`, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...(options.headers || {})
+        }
+    });
+    if (!response.ok) {
+        const erro = await response.json().catch(() => ({}));
+        throw new Error(erro.detail || 'Não foi possível salvar o evento.');
+    }
+    if (response.status === 204) return null;
+    return response.json();
+}
+
+export const listarEventosGestacao = () => requisicaoEventos();
+export const criarEventoGestacao = (evento) => requisicaoEventos('', { method: 'POST', body: JSON.stringify(evento) });
+export const atualizarEventoGestacao = (id, evento) => requisicaoEventos(`/${id}`, { method: 'PUT', body: JSON.stringify(evento) });
+export const marcarEventoRealizado = (id, realizado) => requisicaoEventos(`/${id}/realizado?realizado=${realizado}`, { method: 'PATCH' });
+export const excluirEventoGestacao = (id) => requisicaoEventos(`/${id}`, { method: 'DELETE' });

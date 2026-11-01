@@ -24,3 +24,20 @@ class UsuarioResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class EventoGestacaoInput(BaseModel):
+    titulo: str
+    tipo: str = "consulta"
+    data: date
+    horario: Optional[str] = None
+    clinica: Optional[str] = None
+    observacoes: Optional[str] = None
+
+
+class EventoGestacaoResponse(EventoGestacaoInput):
+    id: UUID
+    realizado: bool
+
+    class Config:
+        from_attributes = True
