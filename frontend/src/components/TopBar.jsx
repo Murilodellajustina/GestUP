@@ -9,8 +9,8 @@ export default function TopBar({ titulo, showBack = false, icone }) {
     <div className="d-flex align-items-center justify-content-between px-4 py-3 bg-white sticky-top" style={{ zIndex: 10 }}>
       <div className="d-flex align-items-center gap-2">
         {showBack && (
-          <button 
-            onClick={() => navigate(-1)} 
+          <button
+            onClick={() => navigate(-1)}
             className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center border-0"
             style={{ color: '#4b5563', width: '40px', height: '40px' }}
           >

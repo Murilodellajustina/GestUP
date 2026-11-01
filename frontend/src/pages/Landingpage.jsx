@@ -26,20 +26,20 @@ export default function Landingpage() {
 
         <div className="w-100 mt-2 mb-3">
           <button 
-            onClick={() => navigate('/cadastro')}
+            onClick={() => navigate('/login')}
             className="btn w-100 py-3 fw-bold shadow-sm mb-4 text-white"
             style={{ backgroundColor: '#8b5cf6', borderRadius: '50px', fontSize: '1.1rem' }}
           >
-            Começar
+            Entrar
           </button>
           <p className="text-center text-muted small fw-medium">
-            Já tem uma conta?{' '}
+            Não tem uma conta? conta?{' '}
             <button 
-              onClick={() => navigate('/login')} 
+              onClick={() => navigate('/cadastro')} 
               className="btn btn-link p-0 fw-bold text-decoration-none ms-1"
               style={{ color: '#7c3aed' }}
             >
-              Entrar
+              Criar conta
             </button>
           </p>
         </div>

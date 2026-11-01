@@ -10,7 +10,7 @@ export default function TelaInicial() {
   const [nome, setNome] = useState("Carregando...");
   const [semanasGestacao, setSemanasGestacao] = useState(0);
   const [trimestre, setTrimestre] = useState(1);
-  const [progresso, setProgresso] = useState(0);
+  const [progresso, setProgresso] = useState(0);  
 
   useEffect(() => {
     async function carregarDados() {
