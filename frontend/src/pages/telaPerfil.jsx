@@ -42,7 +42,7 @@ export default function TelaPerfil() {
 
       <div className="mt-4 px-3">
         <div className="bg-white shadow-sm overflow-hidden" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
-          <button className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
+          <button onClick={() => navigate('/meus-dados')} className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
             <div className="d-flex align-items-center gap-3">
               <User size={20} className="text-muted" />
               <span className="fw-medium text-dark" style={{ fontSize: '0.9rem' }}>Meus dados</span>
@@ -58,7 +58,7 @@ export default function TelaPerfil() {
             <ChevronRight size={18} className="text-muted" />
           </button>
 
-          <button className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
+          <button onClick={() => navigate('/notificacoes')} className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
             <div className="d-flex align-items-center gap-3">
               <Bell size={20} className="text-muted" />
               <span className="fw-medium text-dark" style={{ fontSize: '0.9rem' }}>Notificações</span>
@@ -66,7 +66,7 @@ export default function TelaPerfil() {
             <ChevronRight size={18} className="text-muted" />
           </button>
 
-          <button className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
+          <button onClick={() => navigate('/feedback')} className="btn btn-white w-100 d-flex align-items-center justify-content-between p-3 border-0 border-bottom" style={{ borderRadius: 0 }}>
             <div className="d-flex align-items-center gap-3">
               <HelpCircle size={20} className="text-muted" />
               <span className="fw-medium text-dark" style={{ fontSize: '0.9rem' }}>Feedback</span>

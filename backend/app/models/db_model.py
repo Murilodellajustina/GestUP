@@ -31,3 +31,20 @@ class EventoGestacao(Base):
     observacoes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     realizado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     lembrete_enviado_em: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
+class Feedback(Base):
+    __tablename__ = "feedbacks"
+    
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mensagem: Mapped[str] = mapped_column(Text, nullable=False)
+    data_envio: Mapped[date] = mapped_column(Date, default=date.today)
+
+class Configuracao(Base):
+    __tablename__ = "configuracoes"
+    
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    usuario_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("usuarios.id"), unique=True)
+    modoNoturno: Mapped[bool] = mapped_column(Boolean, default=False)
+    textoGrande: Mapped[bool] = mapped_column(Boolean, default=False)
+    notificacoesPush: Mapped[bool] = mapped_column(Boolean, default=True)
+    lembretesEmail: Mapped[bool] = mapped_column(Boolean, default=False)

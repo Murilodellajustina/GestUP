@@ -23,7 +23,7 @@ function formatarData(data) {
 }
 
 export default function TelaGestacao() {
-  const [dum, setDum] = useState(null);
+  const [dataInicial, setDataInicial] = useState(null);
   const [hoje, setHoje] = useState(() => new Date());
   const [expandido, setExpandido] = useState(false);
   const [carregando, setCarregando] = useState(true);
@@ -33,29 +33,44 @@ export default function TelaGestacao() {
     let ativo = true;
     buscarPerfilUsuario()
       .then((dados) => {
-        if (ativo) setDum(dataLocal(dados.idadeGestacional));
+        if (ativo && dados.idadeGestacional) {
+          const [ano, mes, dia] = dados.idadeGestacional.split('-');
+          setDataInicial(new Date(ano, mes - 1, dia));
+        }
       })
       .catch((error) => {
         console.error('Erro ao carregar perfil:', error);
         if (ativo) setErro('Não foi possível carregar a data da última menstruação.');
       })
       .finally(() => { if (ativo) setCarregando(false); });
+      
     const intervalo = window.setInterval(() => setHoje(new Date()), 60 * 60 * 1000);
     return () => { ativo = false; window.clearInterval(intervalo); };
   }, []);
 
-  const hojeUTC = Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-  const diasDecorridos = dum ? Math.floor((hojeUTC - dum.getTime()) / 86400000) : 0;
-  const dataValida = dum && diasDecorridos >= 0;
-  const semanasCompletas = dataValida ? Math.floor(diasDecorridos / 7) : 0;
-  const semana = Math.min(semanasCompletas + 1, 40);
+  const diffTempo = dataInicial ? hoje.getTime() - dataInicial.getTime() : 0;
+  const diasDecorridos = dataInicial ? Math.floor(diffTempo / (1000 * 60 * 60 * 24)) : 0;
+  
+  const dataValida = dataInicial && diasDecorridos >= 0;
+  const semanas = dataValida ? Math.floor(diasDecorridos / 7) : 0;
+  
+  const semanaExibida = semanas > 0 ? Math.min(semanas, 40) : 0;
   const diasNaSemana = dataValida ? diasDecorridos % 7 : 0;
-  const semanaExibida = dataValida ? semana : 1;
-  const trimestre = semanaExibida <= 13 ? 1 : semanaExibida <= 27 ? 2 : 3;
+  
+  let trimestre = 1;
+  if (semanaExibida <= 13) trimestre = 1;
+  else if (semanaExibida <= 27) trimestre = 2;
+  else trimestre = 3;
+
   const cor = CORES_TRIMESTRE[trimestre];
-  const progresso = dataValida ? Math.min(Math.round((diasDecorridos / 280) * 100), 100) : 0;
-  const parto = dum ? new Date(dum.getTime() + 280 * 86400000) : null;
-  const dadosSemana = informacoesSemanais[semanaExibida];
+  
+  const porcentagem = Math.min(Math.round((semanaExibida / 40) * 100), 100);
+  const progresso = porcentagem > 0 ? porcentagem : 0;
+  
+  const parto = dataInicial ? new Date(dataInicial.getTime() + 280 * (1000 * 60 * 60 * 24)) : null;
+  
+  const indiceSemana = Math.max(1, semanaExibida);
+  const dadosSemana = informacoesSemanais[indiceSemana] || { titulo: '', descricao: '', desenvolvimento: [], cuidados: '' };
 
   return (
     <div className="d-flex flex-column h-100 bg-light">
@@ -64,15 +79,15 @@ export default function TelaGestacao() {
         {carregando ? <div className="text-center text-muted py-5" role="status">Carregando seu acompanhamento…</div> : (
           <>
             {erro && <div className="alert alert-warning rounded-4" role="alert">{erro}</div>}
-            {!dum && !erro && <div className="alert alert-info rounded-4" role="status">Adicione a data da última menstruação ao seu perfil para acompanhar a gestação.</div>}
-            {dum && !dataValida && <div className="alert alert-warning rounded-4" role="alert">A data da última menstruação está no futuro. Confira a data cadastrada no seu perfil.</div>}
+            {!dataInicial && !erro && <div className="alert alert-info rounded-4" role="status">Adicione a data da última menstruação ao seu perfil para acompanhar a gestação.</div>}
+            {dataInicial && !dataValida && <div className="alert alert-warning rounded-4" role="alert">A data da última menstruação está no futuro. Confira a data cadastrada no seu perfil.</div>}
 
             <section className="bg-white p-4 shadow-sm mb-4" style={{ borderRadius: 24 }} aria-label="Progresso da gestação">
               <div className="d-flex justify-content-between align-items-start mb-3">
                 <div>
                   <p className="small text-muted mb-1">Acompanhamento da gestação</p>
                   <h2 className="fw-bold mb-1" style={{ color: cor.principal, fontSize: '1.55rem' }}>
-                    {dataValida ? `${semana}ª semana` : 'Sua jornada começa aqui'}
+                    {dataValida ? `${semanaExibida}ª semana` : 'Sua jornada começa aqui'}
                   </h2>
                   {dataValida && <p className="mb-0 text-muted small">{diasNaSemana} {diasNaSemana === 1 ? 'dia' : 'dias'} completos nesta semana · {trimestre}º trimestre</p>}
                 </div>
@@ -111,7 +126,7 @@ export default function TelaGestacao() {
                   {expandido ? 'Ocultar detalhes da semana' : 'Ver detalhes desta semana'}
                   {expandido ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </button>
-                {expandido && <ul className="text-secondary small mt-3 mb-0 ps-3">{dadosSemana.desenvolvimento.map((item) => <li className="mb-2" key={item}>{item}</li>)}</ul>}
+                {expandido && <ul className="text-secondary small mt-3 mb-0 ps-3">{dadosSemana.desenvolvimento?.map((item) => <li className="mb-2" key={item}>{item}</li>)}</ul>}
               </section>
 
               <section className="p-4 shadow-sm mb-4" style={{ borderRadius: 24, backgroundColor: cor.clara }}>

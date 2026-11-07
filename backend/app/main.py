@@ -12,6 +12,7 @@ from app.services.security import verificar_senha, get_current_user, criar_token
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 import os
+import uuid
 from uuid import UUID
 from datetime import date, datetime, timedelta
 from contextlib import asynccontextmanager
@@ -22,6 +23,8 @@ from email.message import EmailMessage
 from zoneinfo import ZoneInfo
 from app.models.db_model import EventoGestacao
 from app.schemas.schemas import EventoGestacaoInput, EventoGestacaoResponse
+from app.models.db_model import Feedback, Configuracao
+from app.schemas.schemas import UsuarioUpdate, FeedbackCreate, ConfiguracaoSchema
 
 logger = logging.getLogger(__name__)
 
@@ -261,3 +264,102 @@ def excluir_evento(evento_id: UUID, db: Session = Depends(get_db), current_user:
         raise HTTPException(status_code=404, detail="Evento não encontrado.")
     db.delete(evento)
     db.commit()
+
+@app.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
+def atualizar_usuario(
+    usuario_id: uuid.UUID, 
+    dados: UsuarioUpdate, 
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    if str(current_user.id) != str(usuario_id):
+        raise HTTPException(status_code=403, detail="Sem permissão.")
+    
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    if dados.nome: usuario.nome = dados.nome
+    if dados.telefone: usuario.telefone = dados.telefone
+    if dados.idadeGestacional: usuario.idadeGestacional = dados.idadeGestacional
+    
+    db.commit()
+    db.refresh(usuario)
+    return usuario
+
+@app.post("/feedback")
+def enviar_feedback(dados: FeedbackCreate, db: Session = Depends(get_db)):
+    novo_feedback = Feedback(mensagem=dados.mensagem)
+    db.add(novo_feedback)
+    db.commit()
+    return {"mensagem": "Feedback enviado com sucesso"}
+
+@app.get("/configuracoes/{usuario_id}")
+def buscar_configuracoes(usuario_id: uuid.UUID, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+    config = db.query(Configuracao).filter(Configuracao.usuario_id == usuario_id).first()
+    if not config:
+        config = Configuracao(usuario_id=usuario_id)
+        db.add(config)
+        db.commit()
+        db.refresh(config)
+    return config
+
+@app.put("/configuracoes/{usuario_id}")
+def salvar_configuracoes(usuario_id: uuid.UUID, dados: ConfiguracaoSchema, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+    config = db.query(Configuracao).filter(Configuracao.usuario_id == usuario_id).first()
+    if config:
+        config.modoNoturno = dados.modoNoturno
+        config.textoGrande = dados.textoGrande
+        config.notificacoesPush = dados.notificacoesPush
+        config.lembretesEmail = dados.lembretesEmail
+        db.commit()
+    return {"mensagem": "Configurações salvas"}
+
+@app.get("/notificacoes/{usuario_id}")
+def buscar_notificacoes(
+    usuario_id: uuid.UUID, 
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    if str(current_user.id) != str(usuario_id):
+        raise HTTPException(status_code=403, detail="Sem permissão.")
+    
+    hoje = datetime.now(ZoneInfo("America/Sao_Paulo")).date()
+    limite_semana = hoje + timedelta(days=7)
+    
+    eventos = db.query(EventoGestacao).filter(
+        EventoGestacao.usuario_id == usuario_id,
+        EventoGestacao.realizado == False,
+        EventoGestacao.data >= hoje,
+        EventoGestacao.data <= limite_semana
+    ).order_by(EventoGestacao.data).all()
+    
+    notificacoes = []
+    
+    for evento in eventos:
+        dias_faltando = (evento.data - hoje).days
+        horario_str = f" às {evento.horario}" if evento.horario else ""
+        
+        if dias_faltando == 0:
+            notificacoes.append({
+                "id": str(evento.id),
+                "tipo": "hoje",
+                "titulo": "É hoje!",
+                "mensagem": f"Não se esqueça: você tem {evento.tipo} agendado para hoje{horario_str}.",
+                "tempo": "Hoje"
+            })
+        elif dias_faltando == 1:
+            notificacoes.append({
+                "id": str(evento.id),
+                "tipo": "amanha",
+                "titulo": f"{evento.tipo.capitalize()} amanhã",
+                "mensagem": f"Falta 1 dia para o seu agendamento de {evento.tipo}.",
+                "tempo": "Amanhã"
+            })
+        elif dias_faltando == 7:
+            notificacoes.append({
+                "id": str(evento.id),
+                "tipo": "semana",
+                "titulo": "Lembrete com antecedência",
+                "mensagem": f"Falta 1 semana para o seu agendamento de {evento.tipo}. Programe-se!",
+                "tempo": "Em 7 dias"
+            })
+            
+    return notificacoes
