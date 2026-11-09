@@ -17,6 +17,10 @@ import TelaPerfil from './pages/telaPerfil'
 import TelaSintomas from './pages/telaSintomas'
 import TelaSobre from './pages/telaSobre'
 import TelaExamesRecomendados from './pages/telaExamesRecomendados'
+import TelaFeedback from './pages/telaFeedback'
+import TelaMeusDados from './pages/telaMeusDados'
+import TelaNotificacoes from './pages/telaNotificacoes'
+import TelaConfiguracoes from './pages/telaConfiguracoes'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -38,6 +42,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/sintomas" element={<TelaSintomas />} />
               <Route path="/sobre" element={<TelaSobre />} />
               <Route path="/exames" element={<TelaExamesRecomendados />} />
+              <Route path="/feedback" element={<TelaFeedback />} />
+              <Route path="/meus-dados" element={<TelaMeusDados />} />
+              <Route path="/notificacoes" element={<TelaNotificacoes />} />
+              <Route path="/configuracoes" element={<TelaConfiguracoes />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

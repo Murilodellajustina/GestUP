@@ -41,3 +41,17 @@ class EventoGestacaoResponse(EventoGestacaoInput):
 
     class Config:
         from_attributes = True
+
+class UsuarioUpdate(BaseModel):
+    nome: Optional[str] = None
+    telefone: Optional[str] = None
+    idadeGestacional: Optional[date] = None
+
+class FeedbackCreate(BaseModel):
+    mensagem: str
+
+class ConfiguracaoSchema(BaseModel):
+    modoNoturno: bool
+    textoGrande: bool
+    notificacoesPush: bool
+    lembretesEmail: bool

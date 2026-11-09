@@ -15,6 +15,19 @@ export default function Cadastrar() {
   
   const navigate = useNavigate();
 
+  const handleTelefone = (e) => {
+    let valor = e.target.value.replace(/\D/g, ""); 
+    if (valor.length > 11) valor = valor.slice(0, 11);
+    
+    if (valor.length > 2) {
+      valor = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+    }
+    if (valor.length > 9) {
+      valor = `${valor.slice(0, 10)}-${valor.slice(10)}`;
+    }
+    setTelefone(valor);
+  };
+
   async function handleCadastrar(e) {
     e.preventDefault();
     setErro("");
@@ -83,7 +96,7 @@ export default function Cadastrar() {
               type="tel" 
               placeholder="Telefone: (99) 99999-9999" 
               value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
+              onChange={handleTelefone}
               className="form-control py-3 ps-5 border-light shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
