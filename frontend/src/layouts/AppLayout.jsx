@@ -6,7 +6,7 @@ export default function AppLayout() {
   return (
     <div className="d-flex flex-column flex-md-row h-100 w-100 position-relative">
         <BottomNav />
-      <div className="flex-grow-1 overflow-auto bg-light pb-5 pb-md-0">
+      <div className="flex-grow-1 overflow-auto bg-body-tertiary pb-5 pb-md-0">
         <Outlet />
       </div>
       

@@ -7,7 +7,7 @@ export default function TelaExamesRecomendados() {
   const navigate = useNavigate();
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Exames recomendados" showBack />
       
       <div className="px-4 py-3">
@@ -21,7 +21,7 @@ export default function TelaExamesRecomendados() {
           </button>
         </div>
 
-        <div className="bg-white shadow-sm mb-3 overflow-hidden" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
+        <div className="bg-body shadow-sm mb-3 overflow-hidden" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
           <div className="p-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#f5f3ff', borderBottom: '1px solid #ede9fe' }}>
             <h6 className="fw-bold mb-0" style={{ color: '#4c1d95', fontSize: '0.85rem' }}>1º trimestre (até 13 semanas)</h6>
             <ChevronDown size={20} style={{ color: '#7c3aed' }} />
@@ -37,7 +37,7 @@ export default function TelaExamesRecomendados() {
             ].map((exame, idx) => (
               <div key={idx} className="d-flex align-items-center gap-2">
                 <CheckCircle2 size={18} style={{ color: '#14b8a6' }} className="flex-shrink-0" />
-                <span className="text-dark fw-medium" style={{ fontSize: '0.85rem' }}>{exame}</span>
+                <span className="text-body fw-medium" style={{ fontSize: '0.85rem' }}>{exame}</span>
               </div>
             ))}
             
@@ -50,13 +50,13 @@ export default function TelaExamesRecomendados() {
           </div>
         </div>
 
-        <div className="bg-white p-3 shadow-sm d-flex justify-content-between align-items-center mb-2" style={{ borderRadius: '16px', border: '1px solid #f3f4f6' }}>
-          <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '0.85rem' }}>2º trimestre <span className="text-muted fw-normal ms-1">(14 a 27 semanas)</span></h6>
+        <div className="bg-body p-3 shadow-sm d-flex justify-content-between align-items-center mb-2" style={{ borderRadius: '16px', border: '1px solid #f3f4f6' }}>
+          <h6 className="fw-bold text-body mb-0" style={{ fontSize: '0.85rem' }}>2º trimestre <span className="text-muted fw-normal ms-1">(14 a 27 semanas)</span></h6>
           <ChevronRight size={20} className="text-muted" />
         </div>
 
-        <div className="bg-white p-3 shadow-sm d-flex justify-content-between align-items-center" style={{ borderRadius: '16px', border: '1px solid #f3f4f6' }}>
-          <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '0.85rem' }}>3º trimestre <span className="text-muted fw-normal ms-1">(28 a 41 semanas)</span></h6>
+        <div className="bg-body p-3 shadow-sm d-flex justify-content-between align-items-center" style={{ borderRadius: '16px', border: '1px solid #f3f4f6' }}>
+          <h6 className="fw-bold text-body mb-0" style={{ fontSize: '0.85rem' }}>3º trimestre <span className="text-muted fw-normal ms-1">(28 a 41 semanas)</span></h6>
           <ChevronRight size={20} className="text-muted" />
         </div>
       </div>

@@ -1,0 +1,19 @@
+:root {
+  --gu-texto: #1f2937;
+  --gu-suave: #f5f3ff;     
+  --gu-cinza: #f1f5f9;
+  --gu-borda: #f3f4f6;
+}
+[data-bs-theme='dark'] {
+  --gu-texto: #f3f4f6;
+  --gu-suave: #2e2347;
+  --gu-cinza: #2b3035;
+  --gu-borda: #373b3e;
+}
+
+[data-bs-theme='dark'] .btn-light {
+  --bs-btn-bg: #2b3035;
+  --bs-btn-color: #e5e7eb;
+  --bs-btn-hover-bg: #373b3e;
+  --bs-btn-hover-color: #fff;
+}

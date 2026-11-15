@@ -42,7 +42,7 @@ const handleSalvar = async (e) => {
 };
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Meus dados" showBack />
       
       <div className="px-4 py-4 overflow-auto">

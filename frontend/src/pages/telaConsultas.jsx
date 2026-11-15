@@ -134,11 +134,11 @@ export default function TelaConsultas() {
   };
   const adicionarSugestao = (item, tipo) => abrirNovo({ titulo: item.titulo, tipo, data: item.data });
 
-  return <div className="d-flex flex-column h-100 bg-light">
+  return <div className="d-flex flex-column h-100 bg-body-tertiary">
     <TopBar titulo="Consultas e exames" showBack />
     <main className="px-3 px-sm-4 py-3" style={{ overflowY: 'auto', paddingBottom: 96 }}>
       {erro && <div className="alert alert-warning rounded-4 py-2" role="alert">{erro}</div>}
-      <section className="bg-white p-3 shadow-sm mb-3" style={{ borderRadius: 22 }} aria-label="Calendário mensal">
+      <section className="bg-body p-3 shadow-sm mb-3" style={{ borderRadius: 22 }} aria-label="Calendário mensal">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <button className="btn btn-light rounded-circle p-2" aria-label="Mês anterior" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() - 1, 1))}><ChevronLeft size={19} /></button>
           <h2 className="h6 fw-bold text-capitalize mb-0">{new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(mes)}</h2>
@@ -150,7 +150,7 @@ export default function TelaConsultas() {
             const chave = dateKey(data);
             const temEvento = eventos.some((evento) => evento.data === chave);
             const selecionado = chave === diaSelecionado;
-            return <button key={chave} type="button" onClick={() => { setDiaSelecionado(chave); if (data.getMonth() !== mes.getMonth()) setMes(new Date(data.getFullYear(), data.getMonth(), 1)); }} aria-label={`${data.getDate()}${temEvento ? ', há evento' : ''}`} aria-pressed={selecionado} className="calendar-day btn p-0 d-flex flex-column align-items-center justify-content-center mx-auto" style={{ width: 38, height: 42, color: selecionado ? '#fff' : data.getMonth() === mes.getMonth() ? '#292536' : '#c4c1cc', backgroundColor: selecionado ? '#7c3aed' : 'transparent', borderRadius: 12, fontWeight: chave === hoje ? 700 : 400 }}>
+            return <button key={chave} type="button" onClick={() => { setDiaSelecionado(chave); if (data.getMonth() !== mes.getMonth()) setMes(new Date(data.getFullYear(), data.getMonth(), 1)); }} aria-label={`${data.getDate()}${temEvento ? ', há evento' : ''}`} aria-pressed={selecionado} className="calendar-day btn p-0 d-flex flex-column align-items-center justify-content-center mx-auto" style={{ width: 38, height: 42, color: selecionado ? '#fff' : data.getMonth() === mes.getMonth() ? '#a68aff' : '#c4c1cc', backgroundColor: selecionado ? '#7c3aed' : 'transparent', borderRadius: 12, fontWeight: chave === hoje ? 700 : 400 }}>
               {data.getDate()}<span style={{ height: 5, width: 5, borderRadius: '50%', backgroundColor: temEvento ? (selecionado ? '#fff' : '#8b5cf6') : 'transparent' }} />
             </button>;
           })}
@@ -167,7 +167,7 @@ export default function TelaConsultas() {
           {eventosDia.map((evento) => {
             const dias = Math.ceil((new Date(`${evento.data}T12:00:00`) - new Date(`${hoje}T12:00:00`)) / 86400000);
             const alerta = !evento.realizado && dias >= 0 && dias < 7;
-            return <article key={evento.id} className="bg-white p-3 shadow-sm" style={{ borderRadius: 18, border: alerta ? '1px solid #fecaca' : '1px solid #f3f4f6', background: alerta ? '#fff1f2' : '#fff' }}>
+            return <article key={evento.id} className="bg-body p-3 shadow-sm" style={{ borderRadius: 18, border: alerta ? '1px solid #fecaca' : '1px solid #f3f4f6', background: alerta ? '#fff1f2' : '#fff' }}>
               <div className="d-flex gap-3 align-items-start">
                 <button onClick={() => alternarRealizado(evento)} className="btn p-0 border-0" aria-label={evento.realizado ? 'Marcar como pendente' : 'Marcar como realizado'}>{evento.realizado ? <CheckCircle2 size={23} color="#0d9488" /> : <Circle size={23} color={alerta ? '#dc2626' : '#aaa4b5'} />}</button>
                 <div className="flex-grow-1">
@@ -193,17 +193,17 @@ export default function TelaConsultas() {
       <section className="mb-4">
         <div className="d-flex align-items-center gap-2 mb-1"><Stethoscope size={19} color="#7c3aed" /><h2 className="h6 fw-bold mb-0">Sugestões para sua fase</h2></div>
         <p className="small text-muted mb-3">Sugestões baseadas na idade gestacional. Confirme cada indicação e data com sua equipe de pré-natal.</p>
-        {!dum && <div className="small text-muted bg-white p-3 rounded-4">Cadastre sua DUM no perfil para personalizar as sugestões por semana.</div>}
-        {dum && !eventos.some((evento) => evento.tipo === 'consulta') && <div className="bg-white p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>Primeira consulta de pré-natal</p><p className="small text-muted mb-1">Se ainda não iniciou o pré-natal, procure a unidade de saúde para agendar. O início precoce é recomendado.</p></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => abrirNovo({ titulo: 'Primeira consulta de pré-natal', tipo: 'consulta', data: hoje })}>Agendar</button></div>}
-        {sugestoes.consultas.map((item) => <div key={item.titulo} className="bg-white p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>{item.titulo}</p><p className="small text-muted mb-1">{item.detalhe}</p><span className="small" style={{ color: '#7c3aed' }}>Sugestão: {formatDate(item.data)}</span></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => adicionarSugestao(item, 'consulta')}>Adicionar</button></div>)}
-        {sugestoes.exames.map((item) => <div key={item.titulo} className="bg-white p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>{item.titulo}</p><p className="small text-muted mb-1">{item.detalhe}</p><span className="small" style={{ color: '#7c3aed' }}>{item.periodo} · {formatDate(item.data)}</span></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => adicionarSugestao(item, 'exame')}>Adicionar</button></div>)}
+        {!dum && <div className="small text-muted bg-body p-3 rounded-4">Cadastre sua DUM no perfil para personalizar as sugestões por semana.</div>}
+        {dum && !eventos.some((evento) => evento.tipo === 'consulta') && <div className="bg-body p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>Primeira consulta de pré-natal</p><p className="small text-muted mb-1">Se ainda não iniciou o pré-natal, procure a unidade de saúde para agendar. O início precoce é recomendado.</p></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => abrirNovo({ titulo: 'Primeira consulta de pré-natal', tipo: 'consulta', data: hoje })}>Agendar</button></div>}
+        {sugestoes.consultas.map((item) => <div key={item.titulo} className="bg-body p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>{item.titulo}</p><p className="small text-muted mb-1">{item.detalhe}</p><span className="small" style={{ color: '#7c3aed' }}>Sugestão: {formatDate(item.data)}</span></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => adicionarSugestao(item, 'consulta')}>Adicionar</button></div>)}
+        {sugestoes.exames.map((item) => <div key={item.titulo} className="bg-body p-3 shadow-sm mb-2 d-flex gap-3 align-items-center" style={{ borderRadius: 17 }}><div className="flex-grow-1"><p className="fw-bold mb-1" style={{ fontSize: '.9rem' }}>{item.titulo}</p><p className="small text-muted mb-1">{item.detalhe}</p><span className="small" style={{ color: '#7c3aed' }}>{item.periodo} · {formatDate(item.data)}</span></div><button className="btn btn-sm rounded-pill" style={{ color: '#7c3aed', background: '#f5f3ff' }} onClick={() => adicionarSugestao(item, 'exame')}>Adicionar</button></div>)}
         <p className="small text-muted mt-3">As janelas de ultrassom são referências informativas. Nem todos os exames são indicados para todas as gestações. Confirme com sua equipe.</p>
         <p className="small mb-0"><a href="https://linhasdecuidado.saude.gov.br/portal/pre-natal-baixo-risco/unidade-de-atencao-primaria/planejamento-terapeutico/" target="_blank" rel="noreferrer">Orientações de pré-natal do Ministério da Saúde</a></p>
       </section>
     </main>
 
     {modal && <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-end align-items-sm-center justify-content-center" style={{ zIndex: 1100, background: 'rgba(20,16,30,.48)' }} onMouseDown={(e) => { if (e.target === e.currentTarget) setModal(false); }}>
-      <section className="bg-white w-100 p-4" style={{ maxWidth: 520, borderRadius: '24px 24px 0 0', maxHeight: '92vh', overflowY: 'auto' }} role="dialog" aria-modal="true" aria-labelledby="form-evento-title">
+      <section className="bg-body w-100 p-4" style={{ maxWidth: 520, borderRadius: '24px 24px 0 0', maxHeight: '92vh', overflowY: 'auto' }} role="dialog" aria-modal="true" aria-labelledby="form-evento-title">
         <div className="d-flex justify-content-between align-items-center mb-3"><h2 id="form-evento-title" className="h5 fw-bold mb-0">{editando ? 'Editar evento' : 'Novo evento'}</h2><button className="btn btn-light rounded-circle p-2" onClick={() => setModal(false)} aria-label="Fechar"><X size={19} /></button></div>
         <form onSubmit={salvar}>
           <label className="form-label small fw-semibold">Tipo</label><select className="form-select mb-3" value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}><option value="consulta">Consulta</option><option value="exame">Exame</option></select>

@@ -40,12 +40,12 @@ export default function TelaNotificacoes() {
   };
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Notificações" showBack />
       
       <div className="px-4 py-3 flex-grow-1 overflow-auto">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <span className="fw-bold text-dark">Recentes</span>
+          <span className="fw-bold text-body">Recentes</span>
           {notificacoes.length > 0 && (
             <button 
               onClick={handleMarcarLidas}
@@ -71,12 +71,12 @@ export default function TelaNotificacoes() {
               const Icone = estilo.icone;
               
               return (
-                <div key={i} className="bg-white p-3 shadow-sm d-flex align-items-start gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
+                <div key={i} className="bg-body p-3 shadow-sm d-flex align-items-start gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
                   <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style={{ width: '45px', height: '45px', backgroundColor: estilo.fundoIcone, color: estilo.corIcone }}>
                     <Icone size={22} />
                   </div>
                   <div className="flex-grow-1">
-                    <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '0.95rem' }}>{notif.titulo}</h6>
+                    <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.95rem' }}>{notif.titulo}</h6>
                     <p className="text-muted mb-1 pe-2" style={{ fontSize: '0.8rem', lineHeight: '1.4' }}>{notif.mensagem}</p>
                     <span className="fw-medium" style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{notif.tempo}</span>
                   </div>

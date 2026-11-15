@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './index.css'
 
 import AppLayout from './layouts/AppLayout'
 
@@ -26,7 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="vh-100 d-flex justify-content-center bg-secondary bg-opacity-10">
-        <div className="bg-white h-100 position-relative d-flex flex-column overflow-hidden shadow-lg" style={{ width: '100%', maxWidth: '2000px' }}>
+        <div className="bg-body h-100 position-relative d-flex flex-column overflow-hidden shadow-lg" style={{ width: '100%', maxWidth: '2000px' }}>
           
           <Routes>
             <Route path="/" element={<Landingpage />} />

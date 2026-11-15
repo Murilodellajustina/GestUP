@@ -23,18 +23,18 @@ export default function TopBar({ titulo, showBack = false, icone }) {
   }, [icone]);
 
   return (
-    <div className="d-flex align-items-center justify-content-between px-4 py-3 bg-white sticky-top" style={{ zIndex: 10 }}>
+    <div className="d-flex align-items-center justify-content-between px-4 py-3 bg-body sticky-top" style={{ zIndex: 10 }}>
       <div className="d-flex align-items-center gap-2">
         {showBack && (
           <button
             onClick={() => navigate(-1)}
             className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center border-0"
-            style={{ color: '#4b5563', width: '40px', height: '40px' }}
+            style={{ color: '#383f49', width: '40px', height: '40px' }}
           >
             <ChevronLeft size={24} />
           </button>
         )}
-        <h1 className="h5 fw-bold mb-0" style={{ color: '#1f2937' }}>{titulo}</h1>
+        <h1 className="h5 fw-bold mb-0" style={{ color: '#d890f5' }}>{titulo}</h1>
       </div>
       <button 
         onClick={() => icone === 'settings' ? navigate('/configuracoes') : navigate('/notificacoes')}

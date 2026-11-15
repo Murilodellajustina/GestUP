@@ -25,7 +25,7 @@ export default function Login() {
   }
 
   return (
-    <div className="d-flex flex-column align-items-center h-100 w-100 bg-white overflow-auto">
+    <div className="d-flex flex-column align-items-center h-100 w-100 bg-body overflow-auto">
       <div className="w-100 px-4 py-5 d-flex flex-column flex-grow-1" style={{ maxWidth: '480px' }}>
         
         <div className="mt-2 mb-5 text-center text-md-start">
@@ -49,7 +49,7 @@ export default function Login() {
                 placeholder="E-mail" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-control py-3 ps-5 border-light shadow-sm"
+                className="form-control py-3 ps-5 border shadow-sm"
                 style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
                 required
               />
@@ -62,7 +62,7 @@ export default function Login() {
                 placeholder="Senha" 
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                className="form-control py-3 ps-5 pe-5 border-light shadow-sm"
+                className="form-control py-3 ps-5 pe-5 border shadow-sm"
                 style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
                 required
               />
@@ -95,7 +95,7 @@ export default function Login() {
           <button 
             type="button" 
             onClick={() => navigate('/cadastro')}
-            className="btn w-100 py-3 fw-bold bg-white shadow-sm"
+            className="btn w-100 py-3 fw-bold bg-body shadow-sm"
             style={{ border: '2px solid #ede9fe', color: '#6b7280', borderRadius: '50px' }}
           >
             Criar conta
@@ -103,8 +103,12 @@ export default function Login() {
         </form>
 
         <div className="mt-5 pb-3 d-flex justify-content-center align-items-center" style={{ color: '#c4b5fd' }}>
-          <Heart size={24} fill="currentColor" />
-          <span className="ms-2 fw-bold" style={{ color: '#8b5cf6' }}>GestUp</span>
+          <img
+              src="/src/imgs/Gestante em forma de coração e G.png"
+              alt="Logo"
+              style={{ width: "50px" }}
+            />
+          <span className="ms-2 fw-bold" style={{ color: '#f65ccd' }}>GestUp</span>
         </div>
       </div>
     </div>
