@@ -101,6 +101,7 @@ def cron_lembretes(authorization: str = Header(None)):
     if not segredo or authorization != f"Bearer {segredo}":
         raise HTTPException(status_code=401, detail="Não autorizado")
     enviar_lembretes_pendentes()
+    return {"ok": True}
 
 @app.get("/")
 def read_root():
