@@ -75,36 +75,16 @@ def enviar_lembretes_pendentes():
                 logger.exception("Falha ao enviar lembrete do evento %s", evento.id)
     finally:
         db.close()
-
-
-@asynccontextmanager
-async def lifespan(_app: FastAPI):
-    async def rotina_lembretes():
-        while True:
-            await asyncio.to_thread(enviar_lembretes_pendentes)
-            await asyncio.sleep(60 * 60)
-
-    tarefa = asyncio.create_task(rotina_lembretes())
-    yield
-    tarefa.cancel()
-    try:
-        await tarefa
-    except asyncio.CancelledError:
-        pass
-
-Base.metadata.create_all(bind=engine)
-
+        
 
 app = FastAPI(title="API Gestup", lifespan=lifespan)
 
 
-os.makedirs("uploads", exist_ok=True)
-app.mount("/static", StaticFiles(directory="uploads"), name="static")
 
 origins = [
     "http://localhost:5173", 
     "http://127.0.0.1:5173",
-    "https://gestupcisamures.vercel.app/",
+    os.getenv("FRONTEND_URL", "https://gestupcisamures.vercel.app"),
 ]
 
 app.add_middleware(
@@ -114,6 +94,14 @@ app.add_middleware(
     allow_methods=["*"], 
     allow_headers=["*"],
 )
+
+@app.get("/cron/lembretes")
+def cron_lembretes(authorization: str = Header(None)):
+    segredo = os.getenv("CRON_SECRET")
+    if not segredo or authorization != f"Bearer {segredo}":
+        raise HTTPException(status_code=401, detail="Não autorizado")
+    enviar_lembretes_pendentes()
+    return {"ok": True}
 
 @app.get("/")
 def read_root():

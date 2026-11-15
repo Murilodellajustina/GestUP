@@ -1,10 +1,19 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
-#substituir pela senha do postgre
-SQLALCHEMY_DATABASE_URL = "postgresql://neondb_owner:npg_9NutIx0EohWH@ep-autumn-surf-bcqezq4s-pooler.c-16.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+load_dotenv()  
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+url = os.environ["DATABASE_URL"]
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql+psycopg://", 1)
+elif url.startswith("postgresql://"):
+    url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+# em serverless cada invocação é curta; NullPool evita acumular conexões
+engine = create_engine(url, poolclass=NullPool, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
