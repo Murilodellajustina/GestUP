@@ -46,7 +46,7 @@ export default function TelaSintomas() {
   const [aba, setAba] = useState('comuns');
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Sintomas na gestação" showBack />
       <main className="px-3 px-sm-4 py-3" style={{ overflowY: 'auto', paddingBottom: 32 }}>
         <div className="d-flex gap-2 mb-3 overflow-auto" role="tablist" aria-label="Categorias de sintomas" style={{ scrollbarWidth: 'none' }}>
@@ -63,7 +63,7 @@ export default function TelaSintomas() {
             <p className="small mb-0">Alguns desconfortos são comuns, mas variam de pessoa para pessoa. Se forem intensos, persistentes ou preocupantes, converse com a equipe do pré-natal.</p>
           </div>
           <div className="d-flex flex-column gap-2">
-            {sintomasComuns.map(({ icon: Icon, title, texto, dica }) => <article key={title} className="bg-white p-3 shadow-sm d-flex align-items-start gap-3" style={{ borderRadius: 18 }}>
+            {sintomasComuns.map(({ icon: Icon, title, texto, dica }) => <article key={title} className="bg-body p-3 shadow-sm d-flex align-items-start gap-3" style={{ borderRadius: 18 }}>
               <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 40, height: 40, background: '#ede9fe', color: '#7c3aed' }}><Icon size={20} /></div>
               <div><h2 className="h6 fw-bold mb-1">{title}</h2><p className="small text-secondary mb-2">{texto}</p><p className="small mb-0" style={{ color: '#5b21b6' }}><strong>O que pode ajudar:</strong> {dica}</p></div>
             </article>)}
@@ -76,7 +76,7 @@ export default function TelaSintomas() {
             <div><h2 className="h6 fw-bold mb-1">Procure atendimento imediatamente</h2><p className="small mb-0">Se apresentar qualquer um destes sinais, procure sua UBS, maternidade de referência ou serviço de urgência. Em emergência grave, ligue para o SAMU: <a className="fw-bold" href="tel:192" style={{ color: '#991b1b' }}>192</a>.</p></div>
           </div>
           <div className="d-flex flex-column gap-2">
-            {sinaisAlerta.map(({ icon: Icon, titulo, texto }) => <article key={titulo} className="bg-white p-3 shadow-sm d-flex gap-3 align-items-start" style={{ borderRadius: 18, borderLeft: '4px solid #dc2626' }}>
+            {sinaisAlerta.map(({ icon: Icon, titulo, texto }) => <article key={titulo} className="bg-body p-3 shadow-sm d-flex gap-3 align-items-start" style={{ borderRadius: 18, borderLeft: '4px solid #dc2626' }}>
               <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 38, height: 38, background: '#fef2f2', color: '#dc2626' }}><Icon size={19} /></div>
               <div><h3 className="h6 fw-bold mb-1">{titulo}</h3><p className="small text-secondary mb-0">{texto}</p></div>
             </article>)}
@@ -85,7 +85,7 @@ export default function TelaSintomas() {
 
         {aba === 'dicas' && <section id="painel-dicas" role="tabpanel" aria-labelledby="aba-dicas">
           <div className="d-flex flex-column gap-2">
-            {dicas.map(({ titulo, texto }) => <article key={titulo} className="bg-white p-3 shadow-sm d-flex gap-3 align-items-start" style={{ borderRadius: 18 }}><CheckCircle2 size={20} color="#7c3aed" className="flex-shrink-0" /><div><h2 className="h6 fw-bold mb-1">{titulo}</h2><p className="small text-secondary mb-0">{texto}</p></div></article>)}
+            {dicas.map(({ titulo, texto }) => <article key={titulo} className="bg-body p-3 shadow-sm d-flex gap-3 align-items-start" style={{ borderRadius: 18 }}><CheckCircle2 size={20} color="#7c3aed" className="flex-shrink-0" /><div><h2 className="h6 fw-bold mb-1">{titulo}</h2><p className="small text-secondary mb-0">{texto}</p></div></article>)}
           </div>
         </section>}
 

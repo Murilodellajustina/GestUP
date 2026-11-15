@@ -4,7 +4,7 @@ import TopBar from '../components/TopBar';
 
 export default function TelaConteudos() {
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Conteúdos" showBack />
       
       <div className="px-4 py-3">
@@ -13,19 +13,19 @@ export default function TelaConteudos() {
           <input 
             type="text" 
             placeholder="Buscar conteúdo..." 
-            className="form-control py-3 ps-5 border-light shadow-sm"
+            className="form-control py-3 ps-5 border shadow-sm"
             style={{ borderRadius: '50px', fontSize: '0.875rem' }}
           />
         </div>
 
         <div className="d-flex gap-2 mb-4 overflow-auto" style={{ scrollbarWidth: 'none' }}>
           <button className="btn rounded-pill px-4 py-1 text-white fw-medium border-0" style={{ backgroundColor: '#7c3aed', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Todos</button>
-          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-white border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Alimentação</button>
-          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-white border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Saúde</button>
-          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-white border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Preparação</button>
+          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-body border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Alimentação</button>
+          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-body border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Saúde</button>
+          <button className="btn rounded-pill px-4 py-1 text-secondary fw-medium bg-body border" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Preparação</button>
         </div>
 
-        <div className="bg-white shadow-sm overflow-hidden mb-4" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
+        <div className="bg-body shadow-sm overflow-hidden mb-4" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
           <div className="position-relative d-flex align-items-center justify-content-center" style={{ height: '160px', backgroundColor: '#fed7aa' }}>
             <div className="position-absolute w-100 h-100" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }}></div>
             <PlayCircle size={48} className="text-white position-relative opacity-75" style={{ zIndex: 1 }} />
@@ -40,22 +40,22 @@ export default function TelaConteudos() {
         </div>
 
         <div className="d-flex flex-column gap-3">
-          <div className="bg-white p-2 shadow-sm d-flex align-items-center gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
+          <div className="bg-body p-2 shadow-sm d-flex align-items-center gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
             <div className="rounded d-flex align-items-center justify-content-center" style={{ width: '60px', height: '60px', backgroundColor: '#fef08a', color: '#ca8a04', borderRadius: '16px' }}>
               <Heart size={24} />
             </div>
             <div>
-              <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '0.9rem' }}>Como lidar com a ansiedade</h6>
+              <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>Como lidar com a ansiedade</h6>
               <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>8 min • Saúde</p>
             </div>
           </div>
 
-          <div className="bg-white p-2 shadow-sm d-flex align-items-center gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
+          <div className="bg-body p-2 shadow-sm d-flex align-items-center gap-3" style={{ borderRadius: '20px', border: '1px solid #f3f4f6' }}>
             <div className="rounded d-flex align-items-center justify-content-center" style={{ width: '60px', height: '60px', backgroundColor: '#dbeafe', color: '#2563eb', borderRadius: '16px' }}>
               <Activity size={24} />
             </div>
             <div>
-              <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '0.9rem' }}>Atividade física na gravidez</h6>
+              <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>Atividade física na gravidez</h6>
               <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>7 min • Bem-estar</p>
             </div>
           </div>

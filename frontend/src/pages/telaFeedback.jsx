@@ -18,7 +18,7 @@ export default function TelaFeedback() {
 
   if (enviado) {
     return (
-      <div className="d-flex flex-column h-100 bg-white align-items-center justify-content-center text-center px-4">
+      <div className="d-flex flex-column h-100 bg-body align-items-center justify-content-center text-center px-4">
         <div className="rounded-circle d-flex align-items-center justify-content-center mb-4" style={{ width: '80px', height: '80px', backgroundColor: '#dbeafe', color: '#3b82f6' }}>
           <MessageSquareHeart size={40} />
         </div>
@@ -29,22 +29,22 @@ export default function TelaFeedback() {
   }
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Deixar Feedback" showBack />
       
       <div className="px-4 py-4 d-flex flex-column flex-grow-1">
-        <div className="bg-white p-4 shadow-sm mb-4" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
-          <h5 className="fw-bold text-dark mb-2">Como está sendo sua experiência?</h5>
+        <div className="bg-body p-4 shadow-sm mb-4" style={{ borderRadius: '24px', border: '1px solid #f3f4f6' }}>
+          <h5 className="fw-bold text-body mb-2">Como está sendo sua experiência?</h5>
           <p className="text-muted small mb-0">Sua opinião é 100% anônima e muito importante para nós! Não coletamos seu nome ou e-mail neste formulário.</p>
         </div>
 
         <form onSubmit={handleEnviar} className="d-flex flex-column flex-grow-1">
           <div className="mb-4 flex-grow-1 d-flex flex-column">
-            <label className="fw-bold text-dark mb-2 ms-1" style={{ fontSize: '0.9rem' }}>Deixe sua sugestão ou crítica:</label>
+            <label className="fw-bold text-body mb-2 ms-1" style={{ fontSize: '0.9rem' }}>Deixe sua sugestão ou crítica:</label>
             <textarea 
               value={mensagem}
               onChange={(e) => setMensagem(e.target.value)}
-              className="form-control flex-grow-1 shadow-sm border-light p-3"
+              className="form-control flex-grow-1 shadow-sm border p-3"
               placeholder="Ex: Gostaria que tivesse mais conteúdos sobre amamentação..."
               style={{ borderRadius: '20px', resize: 'none', backgroundColor: '#fff' }}
               required

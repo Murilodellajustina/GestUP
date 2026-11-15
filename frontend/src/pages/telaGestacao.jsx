@@ -73,7 +73,7 @@ export default function TelaGestacao() {
   const dadosSemana = informacoesSemanais[indiceSemana] || { titulo: '', descricao: '', desenvolvimento: [], cuidados: '' };
 
   return (
-    <div className="d-flex flex-column h-100 bg-light">
+    <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Minha gestação" showBack />
       <main className="px-4 py-4" style={{ overflowY: 'auto' }}>
         {carregando ? <div className="text-center text-muted py-5" role="status">Carregando seu acompanhamento…</div> : (
@@ -82,7 +82,7 @@ export default function TelaGestacao() {
             {!dataInicial && !erro && <div className="alert alert-info rounded-4" role="status">Adicione a data da última menstruação ao seu perfil para acompanhar a gestação.</div>}
             {dataInicial && !dataValida && <div className="alert alert-warning rounded-4" role="alert">A data da última menstruação está no futuro. Confira a data cadastrada no seu perfil.</div>}
 
-            <section className="bg-white p-4 shadow-sm mb-4" style={{ borderRadius: 24 }} aria-label="Progresso da gestação">
+            <section className="bg-body p-4 shadow-sm mb-4" style={{ borderRadius: 24 }} aria-label="Progresso da gestação">
               <div className="d-flex justify-content-between align-items-start mb-3">
                 <div>
                   <p className="small text-muted mb-1">Acompanhamento da gestação</p>
@@ -112,13 +112,13 @@ export default function TelaGestacao() {
             </section>
 
             {dataValida && <>
-              <section className="bg-white p-4 shadow-sm mb-4" style={{ borderRadius: 24 }}>
+              <section className="bg-body p-4 shadow-sm mb-4" style={{ borderRadius: 24 }}>
                 <div className="d-flex align-items-center gap-2 mb-2" style={{ color: cor.principal }}><CalendarDays size={19} /><h3 className="h6 fw-bold mb-0">Data provável do parto</h3></div>
                 <p className="fw-bold mb-1" style={{ fontSize: '1.1rem' }}>{formatarData(parto)}</p>
                 <p className="small text-muted mb-0">Estimativa de 280 dias a partir da DUM. A data pode ser ajustada pela equipe de pré-natal.</p>
               </section>
 
-              <section className="bg-white p-4 shadow-sm mb-4" style={{ borderRadius: 24 }}>
+              <section className="bg-body p-4 shadow-sm mb-4" style={{ borderRadius: 24 }}>
                 <p className="small mb-1" style={{ color: cor.principal }}>Semana {semanaExibida} · {trimestre}º trimestre</p>
                 <h3 className="fw-bold mb-2" style={{ color: '#312e3c', fontSize: '1.25rem' }}>{dadosSemana.titulo}</h3>
                 <p className="text-secondary small mb-3">{dadosSemana.descricao}</p>

@@ -1,10 +1,15 @@
 import { useState } from "react";
 
+const API_URL =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? "http://localhost:8000"
+        : "https://gest-up-git-main-murilo-c024.vercel.app/";
 
 export async function login(email, senha) {
 
     const response = await fetch(
-        "http://localhost:8000/login",
+        `${API_URL}/login`,
         {
             method: "POST",
             headers: {
@@ -32,7 +37,7 @@ export async function login(email, senha) {
 export async function cadastrarUsuario(nome, telefone, IdadeGestacional, email, senha) {
 
     const response = await fetch(
-        "http://localhost:8000/cadastro",
+        `${API_URL}/cadastro`,
         {
             method: "POST",
             headers: {
@@ -64,7 +69,7 @@ export async function buscarPerfilUsuario() {
         throw new Error("Usuário não autenticado");
     }
 
-    const response = await fetch(`http://localhost:8000/usuarios/${usuarioId}`, {
+    const response = await fetch(`${API_URL}/usuarios/${usuarioId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -81,7 +86,7 @@ export async function buscarPerfilUsuario() {
 
 async function requisicaoEventos(path = '', options = {}) {
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:8000/eventos${path}`, {
+    const response = await fetch(`${API_URL}/eventos${path}`, {
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -100,7 +105,7 @@ async function requisicaoEventos(path = '', options = {}) {
 export async function atualizarPerfilUsuario(dados) {
     const token = localStorage.getItem("token");
     const usuarioId = localStorage.getItem("usuario_id");
-    const response = await fetch(`http://localhost:8000/usuarios/${usuarioId}`, {
+    const response = await fetch(`${API_URL}/usuarios/${usuarioId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(dados)
@@ -110,7 +115,7 @@ export async function atualizarPerfilUsuario(dados) {
 }
 
 export async function enviarFeedbackAoBackend(mensagem) {
-    const response = await fetch(`http://localhost:8000/feedback`, {
+    const response = await fetch(`${API_URL}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mensagem })
@@ -122,7 +127,7 @@ export async function enviarFeedbackAoBackend(mensagem) {
 export async function buscarConfiguracoesBackend() {
     const token = localStorage.getItem("token");
     const usuarioId = localStorage.getItem("usuario_id");
-    const response = await fetch(`http://localhost:8000/configuracoes/${usuarioId}`, {
+    const response = await fetch(`${API_URL}/configuracoes/${usuarioId}`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     if (response.ok) return response.json();
@@ -132,7 +137,7 @@ export async function buscarConfiguracoesBackend() {
 export async function salvarConfiguracoesBackend(configs) {
     const token = localStorage.getItem("token");
     const usuarioId = localStorage.getItem("usuario_id");
-    await fetch(`http://localhost:8000/configuracoes/${usuarioId}`, {
+    await fetch(`${API_URL}/configuracoes/${usuarioId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(configs)
@@ -142,7 +147,7 @@ export async function salvarConfiguracoesBackend(configs) {
 export async function buscarNotificacoesBackend() {
     const token = localStorage.getItem("token");
     const usuarioId = localStorage.getItem("usuario_id");
-    const response = await fetch(`http://localhost:8000/notificacoes/${usuarioId}`, {
+    const response = await fetch(`${API_URL}/notificacoes/${usuarioId}`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     if (response.ok) {

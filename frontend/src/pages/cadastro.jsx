@@ -53,7 +53,7 @@ export default function Cadastrar() {
   }
 
   return (
-    <div className="d-flex flex-column align-items-center h-100 w-100 bg-white overflow-auto">
+    <div className="d-flex flex-column align-items-center h-100 w-100 bg-body overflow-auto">
       <div className="w-100 px-4 py-4 d-flex flex-column flex-grow-1" style={{ maxWidth: '480px' }}>
         
         <button 
@@ -84,7 +84,7 @@ export default function Cadastrar() {
               placeholder="Nome completo" 
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="form-control py-3 ps-5 border-light shadow-sm" 
+              className="form-control py-3 ps-5 border shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />
@@ -97,7 +97,7 @@ export default function Cadastrar() {
               placeholder="Telefone: (99) 99999-9999" 
               value={telefone}
               onChange={handleTelefone}
-              className="form-control py-3 ps-5 border-light shadow-sm" 
+              className="form-control py-3 ps-5 border shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />
@@ -110,7 +110,7 @@ export default function Cadastrar() {
               placeholder="Idade Gestacional" 
               value={IdadeGestacional}
               onChange={(e) => setIdadeGestacional(e.target.value)}
-              className="form-control py-3 ps-5 border-light shadow-sm text-muted" 
+              className="form-control py-3 ps-5 border shadow-sm text-muted" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />
@@ -123,7 +123,7 @@ export default function Cadastrar() {
               placeholder="E-mail" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-control py-3 ps-5 border-light shadow-sm" 
+              className="form-control py-3 ps-5 border shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />
@@ -136,7 +136,7 @@ export default function Cadastrar() {
               placeholder="Senha" 
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="form-control py-3 ps-5 border-light shadow-sm" 
+              className="form-control py-3 ps-5 border shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />
@@ -149,7 +149,7 @@ export default function Cadastrar() {
               placeholder="Confirme a senha" 
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
-              className="form-control py-3 ps-5 border-light shadow-sm" 
+              className="form-control py-3 ps-5 border shadow-sm" 
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
               required 
             />

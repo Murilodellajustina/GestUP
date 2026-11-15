@@ -4,7 +4,7 @@ import TopBar from '../components/TopBar';
 
 export default function TelaSobre() {
   return (
-    <div className="d-flex flex-column h-100 bg-white">
+    <div className="d-flex flex-column h-100 bg-body">
       <TopBar titulo="Sobre" showBack />
       
       <div className="d-flex flex-column align-items-center justify-content-center px-4 py-5 flex-grow-1 text-center">
@@ -21,10 +21,10 @@ export default function TelaSobre() {
         </p>
 
         <div className="d-flex align-items-center justify-content-center gap-4 mb-5 opacity-75">
-          <div className="bg-light rounded d-flex align-items-center justify-content-center text-muted fw-bold shadow-sm" style={{ height: '45px', width: '120px', fontSize: '11px' }}>
+          <div className="bg-body-tertiary rounded d-flex align-items-center justify-content-center text-muted fw-bold shadow-sm" style={{ height: '45px', width: '120px', fontSize: '11px' }}>
             IFSC
           </div>
-          <div className="bg-light rounded d-flex align-items-center justify-content-center text-muted fw-bold shadow-sm" style={{ height: '45px', width: '120px', fontSize: '11px' }}>
+          <div className="bg-body-tertiary rounded d-flex align-items-center justify-content-center text-muted fw-bold shadow-sm" style={{ height: '45px', width: '120px', fontSize: '11px' }}>
             CISAMURES
           </div>
         </div>

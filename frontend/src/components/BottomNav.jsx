@@ -17,7 +17,7 @@ export default function BottomNav() {
 
   return (
     <>
-      <div className="d-md-none position-fixed bottom-0 start-0 w-100 bg-white border-top px-3 py-2 d-flex justify-content-between align-items-center shadow-lg" style={{ zIndex: 1000 }}>
+      <div className="d-md-none position-fixed bottom-0 start-0 w-100 bg-body border-top px-3 py-2 d-flex justify-content-between align-items-center shadow-lg" style={{ zIndex: 1000 }}>
         {navItems.map(({ id, icon: Icon, label }) => {
           const isActive = currentPath.includes(id);
           return (
@@ -34,9 +34,13 @@ export default function BottomNav() {
         })}
       </div>
 
-      <div className="d-none d-md-flex flex-column bg-white border-end h-100 py-4 shadow-sm" style={{ width: '260px', zIndex: 1000 }}>
-        <div className="d-flex align-items-center gap-2 mb-5 px-4" style={{ color: '#7c3aed' }}>
-          <Heart size={32} fill="currentColor" />
+      <div className="d-none d-md-flex flex-column bg-body border-end h-100 py-4 shadow-sm" style={{ width: '260px', zIndex: 1000 }}>
+        <div className="d-flex align-items-center gap-2 mb-5 px-4" style={{ color: '#ed3ac3' }}>
+          <img
+              src="/src/imgs/Gestante em forma de coração e G.png"
+              alt="Logo"
+              style={{ width: "50px" }}
+            />
           <h2 className="fs-4 fw-bold mb-0">GestUp</h2>
         </div>
         
