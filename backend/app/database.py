@@ -12,7 +12,6 @@ if url.startswith("postgres://"):
 elif url.startswith("postgresql://"):
     url = url.replace("postgresql://", "postgresql+psycopg://", 1)
 
-# em serverless cada invocação é curta; NullPool evita acumular conexões
 engine = create_engine(url, poolclass=NullPool, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

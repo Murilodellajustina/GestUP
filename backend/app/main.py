@@ -77,7 +77,7 @@ def enviar_lembretes_pendentes():
         db.close()
         
 
-app = FastAPI(title="API Gestup", lifespan=lifespan)
+app = FastAPI(title="API Gestup")
 
 
 
