@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Calendar, BookOpen, Activity } from 'lucide-react';
+import logo from '../imgs/Logo.png';
 
 export default function Landingpage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function Landingpage() {
         <div className="d-flex flex-column align-items-center mt-3 text-center w-100">
           <div className="mb-3 p-3 rounded-circle shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
             <img
-              src="/src/imgs/Gestante em forma de coração e G.png"
+              src={logo}
               alt="Logo"
               style={{ width: "150px" }}
             />
