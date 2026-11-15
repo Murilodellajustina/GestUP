@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { login } from "../Services/Api.js";
 import { User, Lock, Eye, Heart } from 'lucide-react';
+import logo from "../imgs/Logo.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -104,7 +105,7 @@ export default function Login() {
 
         <div className="mt-5 pb-3 d-flex justify-content-center align-items-center" style={{ color: '#c4b5fd' }}>
           <img
-              src="/src/imgs/Gestante em forma de coração e G.png"
+              src={logo}
               alt="Logo"
               style={{ width: "50px" }}
             />

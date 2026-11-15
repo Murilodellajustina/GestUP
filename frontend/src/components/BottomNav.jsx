@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Baby, CalendarDays, BookOpen, User, Heart } from 'lucide-react';
+import logo from '../imgs/Logo.png';
 
 export default function BottomNav() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function BottomNav() {
       <div className="d-none d-md-flex flex-column bg-body border-end h-100 py-4 shadow-sm" style={{ width: '260px', zIndex: 1000 }}>
         <div className="d-flex align-items-center gap-2 mb-5 px-4" style={{ color: '#ed3ac3' }}>
           <img
-              src="/src/imgs/Gestante em forma de coração e G.png"
+              src={logo}
               alt="Logo"
               style={{ width: "50px" }}
             />
