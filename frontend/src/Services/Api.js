@@ -4,7 +4,7 @@ const API_URL =
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
         ? "http://localhost:8000"
-        : "https://gest-up-git-main-murilo-c024.vercel.app/";
+        : "https://gest-up-topaz.vercel.app/";
 
 export async function login(email, senha) {
 
