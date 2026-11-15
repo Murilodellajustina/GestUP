@@ -1,4 +1,5 @@
 from passlib.context import CryptContext
+import os
 import jwt
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException, status
@@ -10,7 +11,7 @@ from app.models.db_model import Usuario
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-SECRET_KEY = "Gesta+_chave_secreta_super_secreta"
+SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

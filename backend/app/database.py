@@ -1,10 +1,18 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
-#substituir pela senha do postgre
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:SenhaPostgres@localhost:5432/GestaMais_db"
+load_dotenv()  
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+url = os.environ["DATABASE_URL"]
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql+psycopg://", 1)
+elif url.startswith("postgresql://"):
+    url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+engine = create_engine(url, poolclass=NullPool, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
