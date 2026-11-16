@@ -4,6 +4,15 @@
   --gu-cinza: #f1f5f9;
   --gu-borda: #f3f4f6;
 }
+
+html[data-texto-grande='true'] {
+  font-size: 112.5%;
+}
+
+html[data-texto-grande='true'] body {
+  line-height: 1.6;
+}
+
 [data-bs-theme='dark'] {
   --gu-texto: #f3f4f6;
   --gu-suave: #2e2347;

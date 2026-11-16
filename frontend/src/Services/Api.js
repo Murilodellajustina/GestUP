@@ -173,3 +173,29 @@ export const criarEventoGestacao = (evento) => requisicaoEventos('', { method: '
 export const atualizarEventoGestacao = (id, evento) => requisicaoEventos(`/${id}`, { method: 'PUT', body: JSON.stringify(evento) });
 export const marcarEventoRealizado = (id, realizado) => requisicaoEventos(`/${id}/realizado?realizado=${realizado}`, { method: 'PATCH' });
 export const excluirEventoGestacao = (id) => requisicaoEventos(`/${id}`, { method: 'DELETE' });
+
+async function requisicaoComunidade(path = '', options = {}) {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Entre na sua conta para participar da comunidade.');
+    const response = await fetch(`${API_URL}/comunidade${path}`, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...(options.headers || {})
+        }
+    });
+    const dados = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação na comunidade.');
+    return dados;
+}
+
+export const listarTopicosComunidade = () => requisicaoComunidade('/topicos');
+export const criarTopicoComunidade = (topico) => requisicaoComunidade('/topicos', {
+    method: 'POST',
+    body: JSON.stringify(topico)
+});
+export const enviarMensagemComunidade = (topicoId, texto) => requisicaoComunidade(`/topicos/${topicoId}/mensagens`, {
+    method: 'POST',
+    body: JSON.stringify({ texto })
+});

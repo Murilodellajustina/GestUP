@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.models.db_model import Base
 from app.database import get_db
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 from app.models.db_model import Usuario
 from app.schemas.schemas import UsuarioCadastro
 from app.services.security import gerar_hash
@@ -21,10 +21,14 @@ import logging
 import smtplib
 from email.message import EmailMessage
 from zoneinfo import ZoneInfo
-from app.models.db_model import EventoGestacao
+from app.models.db_model import EventoGestacao, TopicoComunidade, MensagemComunidade
 from app.schemas.schemas import EventoGestacaoInput, EventoGestacaoResponse
 from app.models.db_model import Feedback, Configuracao
-from app.schemas.schemas import UsuarioUpdate, FeedbackCreate, ConfiguracaoSchema
+from app.schemas.schemas import (
+    UsuarioUpdate, FeedbackCreate, ConfiguracaoSchema,
+    TopicoComunidadeCreate, MensagemComunidadeCreate,
+    TopicoComunidadeResponse, MensagemComunidadeResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +82,11 @@ def enviar_lembretes_pendentes():
         
 
 app = FastAPI(title="API Gestup")
+
+
+@app.on_event("startup")
+def criar_tabelas_comunidade():
+    Base.metadata.create_all(bind=engine, tables=[TopicoComunidade.__table__, MensagemComunidade.__table__])
 
 
 
@@ -253,6 +262,86 @@ def excluir_evento(evento_id: UUID, db: Session = Depends(get_db), current_user:
         raise HTTPException(status_code=404, detail="Evento não encontrado.")
     db.delete(evento)
     db.commit()
+
+
+@app.get("/comunidade/topicos", response_model=list[TopicoComunidadeResponse])
+def listar_topicos_comunidade(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+    topicos = (
+        db.query(TopicoComunidade)
+        .options(
+            joinedload(TopicoComunidade.autor),
+            selectinload(TopicoComunidade.mensagens).joinedload(MensagemComunidade.autor),
+        )
+        .order_by(TopicoComunidade.criado_em.desc())
+        .limit(100)
+        .all()
+    )
+    return [
+        {
+            "id": topico.id,
+            "titulo": topico.titulo,
+            "mensagem_inicial": topico.mensagem_inicial,
+            "autor": topico.autor.nome,
+            "criado_em": topico.criado_em,
+            "mensagens": [
+                {"id": mensagem.id, "texto": mensagem.texto, "autor": mensagem.autor.nome, "criado_em": mensagem.criado_em}
+                for mensagem in topico.mensagens
+            ],
+        }
+        for topico in topicos
+    ]
+
+
+@app.post("/comunidade/topicos", response_model=TopicoComunidadeResponse, status_code=status.HTTP_201_CREATED)
+def criar_topico_comunidade(
+    dados: TopicoComunidadeCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    titulo = dados.titulo.strip()
+    mensagem_inicial = dados.mensagem.strip()
+    if len(titulo) < 4 or not mensagem_inicial:
+        raise HTTPException(status_code=422, detail="Informe um título e uma mensagem para iniciar o tópico.")
+    topico = TopicoComunidade(
+        usuario_id=current_user.id,
+        titulo=titulo,
+        mensagem_inicial=mensagem_inicial,
+    )
+    db.add(topico)
+    db.commit()
+    db.refresh(topico)
+    return {
+        "id": topico.id,
+        "titulo": topico.titulo,
+        "mensagem_inicial": topico.mensagem_inicial,
+        "autor": current_user.nome,
+        "criado_em": topico.criado_em,
+        "mensagens": [],
+    }
+
+
+@app.post(
+    "/comunidade/topicos/{topico_id}/mensagens",
+    response_model=MensagemComunidadeResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def criar_mensagem_comunidade(
+    topico_id: UUID,
+    dados: MensagemComunidadeCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    topico = db.query(TopicoComunidade).filter(TopicoComunidade.id == topico_id).first()
+    if not topico:
+        raise HTTPException(status_code=404, detail="Tópico não encontrado.")
+    texto = dados.texto.strip()
+    if not texto:
+        raise HTTPException(status_code=422, detail="Escreva uma mensagem antes de enviar.")
+    mensagem = MensagemComunidade(topico_id=topico.id, usuario_id=current_user.id, texto=texto)
+    db.add(mensagem)
+    db.commit()
+    db.refresh(mensagem)
+    return {"id": mensagem.id, "texto": mensagem.texto, "autor": current_user.nome, "criado_em": mensagem.criado_em}
 
 @app.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
 def atualizar_usuario(

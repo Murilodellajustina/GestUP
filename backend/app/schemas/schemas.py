@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 class UsuarioLogin(BaseModel):
@@ -55,3 +55,28 @@ class ConfiguracaoSchema(BaseModel):
     textoGrande: bool
     notificacoesPush: bool
     lembretesEmail: bool
+
+
+class TopicoComunidadeCreate(BaseModel):
+    titulo: str = Field(min_length=4, max_length=120)
+    mensagem: str = Field(min_length=2, max_length=4000)
+
+
+class MensagemComunidadeCreate(BaseModel):
+    texto: str = Field(min_length=1, max_length=2000)
+
+
+class MensagemComunidadeResponse(BaseModel):
+    id: UUID
+    texto: str
+    autor: str
+    criado_em: datetime
+
+
+class TopicoComunidadeResponse(BaseModel):
+    id: UUID
+    titulo: str
+    mensagem_inicial: str
+    autor: str
+    criado_em: datetime
+    mensagens: list[MensagemComunidadeResponse] = Field(default_factory=list)

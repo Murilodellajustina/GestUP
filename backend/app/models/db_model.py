@@ -32,6 +32,32 @@ class EventoGestacao(Base):
     realizado: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     lembrete_enviado_em: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
+
+class TopicoComunidade(Base):
+    __tablename__ = "topicos_comunidade"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    usuario_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    titulo: Mapped[str] = mapped_column(String(120), nullable=False)
+    mensagem_inicial: Mapped[str] = mapped_column(Text, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    autor: Mapped["Usuario"] = relationship()
+    mensagens: Mapped[List["MensagemComunidade"]] = relationship(
+        back_populates="topico", cascade="all, delete-orphan", order_by="MensagemComunidade.criado_em"
+    )
+
+
+class MensagemComunidade(Base):
+    __tablename__ = "mensagens_comunidade"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    topico_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("topicos_comunidade.id", ondelete="CASCADE"), nullable=False, index=True)
+    usuario_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    texto: Mapped[str] = mapped_column(Text, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    topico: Mapped[TopicoComunidade] = relationship(back_populates="mensagens")
+    autor: Mapped["Usuario"] = relationship()
+
 class Feedback(Base):
     __tablename__ = "feedbacks"
     

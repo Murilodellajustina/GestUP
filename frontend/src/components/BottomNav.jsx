@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Baby, CalendarDays, BookOpen, User, Heart } from 'lucide-react';
+import { Home, Baby, CalendarDays, BookOpen, User, MessageCircle } from 'lucide-react';
 import logo from '../imgs/Logo.png';
 
 export default function BottomNav() {
@@ -14,6 +14,7 @@ export default function BottomNav() {
     { id: '/consultas', icon: CalendarDays, label: 'Calendário' },
     { id: '/conteudos', icon: BookOpen, label: 'Conteúdos' },
     { id: '/perfil', icon: User, label: 'Perfil' },
+    { id: '/comunidade', icon: MessageCircle, label: 'GesBlog' },
   ];
 
   return (
@@ -26,7 +27,7 @@ export default function BottomNav() {
               key={`mobile-${id}`}
               onClick={() => navigate(id)}
               className="btn btn-link text-decoration-none d-flex flex-column align-items-center p-1 border-0"
-              style={{ minWidth: '60px', color: isActive ? '#7c3aed' : '#9ca3af' }}
+              style={{ minWidth: '48px', color: isActive ? '#7c3aed' : '#9ca3af' }}
             >
               <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
               <span className="fw-medium mt-1" style={{ fontSize: '10px' }}>{label}</span>
