@@ -4,9 +4,9 @@
 
 Aplicação web para acompanhamento da gestação. O projeto reúne uma interface web em React e uma API em Python com FastAPI. A tela de cadastro inclui informação sobre a DUM (Data da Última Menstruação), utilizada como referência no contexto do acompanhamento gestacional.
 
-O **Fórum** é o espaço onde as gestantes tiram dúvidas entre si: cada uma publica perguntas (com opção de anônimo) em categorias como trimestre, alimentação e emocional, responde as perguntas das outras, curta publicações e denuncia conteúdos inadequados para a moderação.
+O **GesBlog** é o fórum do GestUP, onde as gestantes tiram dúvidas entre si: cada uma publica perguntas (com opção de anônimo) em categorias como trimestre, alimentação e emocional, responde as perguntas das outras, curte publicações e denuncia conteúdos inadequados para a moderação.
 
-> **Atenção:** o GestUP é uma ferramenta informativa e não substitui consultas, exames ou orientações de profissionais de saúde. As respostas do fórum vêm de outras gestantes e não são orientação médica.
+> **Atenção:** o GestUP é uma ferramenta informativa e não substitui consultas, exames ou orientações de profissionais de saúde. As respostas do GesBlog vêm de outras gestantes e não são orientação médica.
 
 ## Acesso
 
@@ -107,9 +107,9 @@ pip install -r requirements.txt pytest httpx
 python -m pytest tests/
 ```
 
-Os testes do fórum (`tests/test_forum.py`) cobrem perguntas anônimas, categorias, curtidas, edição/exclusão do próprio conteúdo, denúncias e o painel de moderação.
+Os testes do GesBlog (`tests/test_forum.py`) cobrem perguntas anônimas, categorias, curtidas, edição/exclusão do próprio conteúdo, denúncias e o painel de moderação.
 
-## Moderação do fórum
+## Moderação do GesBlog
 
 A conta de moderação é definida pela variável de ambiente `ADMIN_EMAILS` (e-mails separados por vírgula). No startup da API, essas contas recebem o papel `admin`, que dá acesso ao painel de denúncias em `/moderacao`, onde é possível remover ou ignorar conteúdos denunciados. As perguntas anônimas têm o nome da autora visível apenas para a própria e para a moderação.
 

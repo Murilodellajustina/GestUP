@@ -47,7 +47,7 @@ export default function TelaModeracao() {
 
   async function resolver(denunciaId, acao) {
     const mensagemConfirmacao = acao === 'remover'
-      ? 'Remover o conteúdo denunciado do fórum?'
+      ? 'Remover o conteúdo denunciado do GesBlog?'
       : 'Ignorar esta denúncia e manter o conteúdo?';
     if (!window.confirm(mensagemConfirmacao)) return;
     setErro('');
@@ -73,7 +73,7 @@ export default function TelaModeracao() {
             <ShieldAlert className="text-muted mb-2" size={30} />
             <p className="fw-semibold mb-1">Acesso restrito</p>
             <p className="small text-muted mb-3">Esta área é exclusiva da moderação do GestUp.</p>
-            <button type="button" className="btn rounded-pill px-4 text-white" style={{ backgroundColor: '#7c3aed' }} onClick={() => navigate('/forum')}>Voltar ao fórum</button>
+            <button type="button" className="btn rounded-pill px-4 text-white" style={{ backgroundColor: '#7c3aed' }} onClick={() => navigate('/forum')}>Voltar ao GesBlog</button>
           </div>
         </main>
       </div>
@@ -87,7 +87,7 @@ export default function TelaModeracao() {
       <main className="px-4 py-3 mx-auto w-100" style={{ maxWidth: '820px' }}>
         <section className="p-4 mb-4 text-white shadow-sm" style={{ borderRadius: '24px', background: '#7c3aed' }}>
           <div className="d-flex align-items-center gap-2 mb-2"><ShieldCheck size={22} /><span className="fw-semibold">Central de denúncias</span></div>
-          <p className="mb-0 small" style={{ opacity: 0.92 }}>Analise denúncias das gestantes sobre perguntas e respostas do fórum.</p>
+          <p className="mb-0 small" style={{ opacity: 0.92 }}>Analise denúncias das gestantes sobre perguntas e respostas do GesBlog.</p>
         </section>
 
         {sucesso && <div className="alert alert-success rounded-4 py-2" role="status">{sucesso}</div>}
@@ -162,7 +162,7 @@ export default function TelaModeracao() {
                   </div>
                 ) : (
                   <p className="small text-muted mb-0">
-                    {denuncia.topico_id || denuncia.mensagem_id ? 'Denúncia resolvida.' : 'Conteúdo foi removido do fórum.'}
+                    {denuncia.topico_id || denuncia.mensagem_id ? 'Denúncia resolvida.' : 'Conteúdo foi removido do GesBlog.'}
                   </p>
                 )}
               </article>

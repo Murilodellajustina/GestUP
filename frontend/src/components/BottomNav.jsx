@@ -12,7 +12,7 @@ export default function BottomNav() {
     { id: '/home', icon: Home, label: 'Início' },
     { id: '/gestacao', icon: Baby, label: 'Gestação' },
     { id: '/consultas', icon: CalendarDays, label: 'Calendário' },
-    { id: '/forum', icon: MessagesSquare, label: 'Fórum' },
+    { id: '/forum', icon: MessagesSquare, label: 'GesBlog' },
     { id: '/perfil', icon: User, label: 'Perfil' },
   ];
 

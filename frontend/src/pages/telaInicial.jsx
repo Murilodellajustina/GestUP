@@ -110,7 +110,7 @@ export default function TelaInicial() {
           <div className="rounded-circle d-flex align-items-center justify-content-center mb-2" style={{ width: '40px', height: '40px', backgroundColor: '#ffedd5', color: '#f97316' }}>
             <MessagesSquare size={20} />
           </div>
-          <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>Fórum</h6>
+          <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>GesBlog</h6>
           <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>Tire dúvidas com outras gestantes</p>
         </button>
       </div>

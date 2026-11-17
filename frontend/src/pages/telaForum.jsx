@@ -61,7 +61,7 @@ export default function TelaForum() {
       const dados = await listarPerguntasForum();
       setPerguntas(dados);
     } catch (error) {
-      setErro(error.message || 'Não foi possível carregar o fórum.');
+      setErro(error.message || 'Não foi possível carregar o GesBlog.');
     } finally {
       setCarregando(false);
     }
@@ -226,7 +226,7 @@ export default function TelaForum() {
 
   return (
     <div className="d-flex flex-column h-100 bg-body-tertiary overflow-auto">
-      <TopBar titulo="Fórum" showBack />
+      <TopBar titulo="GesBlog" showBack />
 
       <main className="px-4 py-3 mx-auto w-100" style={{ maxWidth: '820px' }}>
         <section className="p-4 mb-3 text-white shadow-sm" style={{ borderRadius: '24px', background: '#c026d3' }}>
@@ -246,7 +246,7 @@ export default function TelaForum() {
 
         <div className="alert d-flex align-items-start gap-2 py-2 px-3 mb-4 rounded-4 border-0" style={{ backgroundColor: '#f5f3ff', color: '#4c1d95' }} role="note">
           <Stethoscope size={18} className="flex-shrink-0 mt-1" aria-hidden="true" />
-          <small>As respostas do fórum vêm de outras gestantes e <strong>não substituem uma consulta médica</strong>. Em caso de sintomas ou emergência, procure sua equipe de pré-natal.</small>
+          <small>As respostas do GesBlog vêm de outras gestantes e <strong>não substituem uma consulta médica</strong>. Em caso de sintomas ou emergência, procure sua equipe de pré-natal.</small>
         </div>
 
         {erro && (
@@ -296,7 +296,7 @@ export default function TelaForum() {
           <input
             type="search"
             aria-label="Buscar perguntas"
-            placeholder="Buscar no fórum..."
+            placeholder="Buscar no GesBlog..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             className="form-control py-3 ps-5 border shadow-sm"

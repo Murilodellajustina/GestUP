@@ -177,7 +177,7 @@ export const excluirEventoGestacao = (id) => requisicaoEventos(`/${id}`, { metho
 
 async function requisicaoComunidade(path = '', options = {}) {
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('Entre na sua conta para participar do fórum.');
+    if (!token) throw new Error('Entre na sua conta para participar do GesBlog.');
     const response = await fetch(`${API_URL}/comunidade${path}`, {
         ...options,
         headers: {
@@ -187,7 +187,7 @@ async function requisicaoComunidade(path = '', options = {}) {
         }
     });
     const dados = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação no fórum.');
+    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação no GesBlog.');
     return dados;
 }
 
