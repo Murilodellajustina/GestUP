@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, HeartPulse, Book } from 'lucide-react';
+import { Calendar, HeartPulse, MessagesSquare } from 'lucide-react';
 import TopBar from '../components/TopBar';
 import { buscarPerfilUsuario } from '../Services/Api';
 
@@ -106,12 +106,12 @@ export default function TelaInicial() {
       </div>
 
       <div className="col-6">
-        <button onClick={() => navigate('/conteudos')} className="btn bg-body w-100 p-3 text-start shadow-sm border-0 h-100" style={{ borderRadius: '20px'}}>
+        <button onClick={() => navigate('/forum')} className="btn bg-body w-100 p-3 text-start shadow-sm border-0 h-100" style={{ borderRadius: '20px'}}>
           <div className="rounded-circle d-flex align-items-center justify-content-center mb-2" style={{ width: '40px', height: '40px', backgroundColor: '#ffedd5', color: '#f97316' }}>
-            <Book size={20} />
+            <MessagesSquare size={20} />
           </div>
-          <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>Conteúdos</h6>
-          <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>Dicas, vídeos e informações confiáveis</p>
+          <h6 className="fw-bold text-body mb-1" style={{ fontSize: '0.9rem' }}>Fórum</h6>
+          <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>Tire dúvidas com outras gestantes</p>
         </button>
       </div>
     </div>

@@ -21,6 +21,7 @@ class UsuarioResponse(BaseModel):
     email: str
     telefone: Optional[str] = None
     idadeGestacional: Optional[date] = None
+    papel: str = "gestante"
 
     class Config:
         from_attributes = True
@@ -57,13 +58,36 @@ class ConfiguracaoSchema(BaseModel):
     lembretesEmail: bool
 
 
+# Categorias e motivos aceitos no fórum (validados nas rotas, no estilo de "consulta"/"exame")
+CATEGORIAS_FORUM = {
+    "1º trimestre", "2º trimestre", "3º trimestre",
+    "pós-parto", "alimentação", "emocional", "outros",
+}
+MOTIVOS_DENUNCIA = {
+    "conteúdo ofensivo", "desinformação",
+    "assédio ou constrangimento", "spam", "outro",
+}
+
+
 class TopicoComunidadeCreate(BaseModel):
     titulo: str = Field(min_length=4, max_length=120)
     mensagem: str = Field(min_length=2, max_length=4000)
+    categoria: str = "outros"
+    anonima: bool = False
+
+
+class TopicoComunidadeUpdate(BaseModel):
+    titulo: Optional[str] = Field(default=None, min_length=4, max_length=120)
+    mensagem: Optional[str] = Field(default=None, min_length=2, max_length=4000)
+    categoria: Optional[str] = None
 
 
 class MensagemComunidadeCreate(BaseModel):
     texto: str = Field(min_length=1, max_length=2000)
+
+
+class MensagemComunidadeUpdate(BaseModel):
+    texto: Optional[str] = Field(default=None, min_length=1, max_length=2000)
 
 
 class MensagemComunidadeResponse(BaseModel):
@@ -71,12 +95,47 @@ class MensagemComunidadeResponse(BaseModel):
     texto: str
     autor: str
     criado_em: datetime
+    sou_autor: bool = False
+    curtidas: int = 0
+    curtiu: bool = False
 
 
 class TopicoComunidadeResponse(BaseModel):
     id: UUID
     titulo: str
     mensagem_inicial: str
+    categoria: str
+    anonima: bool
     autor: str
+    autor_real: Optional[str] = None  # preenchido só para moderação ver quem postou como anônima
     criado_em: datetime
+    sou_autor: bool = False
+    curtidas: int = 0
+    curtiu: bool = False
     mensagens: list[MensagemComunidadeResponse] = Field(default_factory=list)
+
+
+class DenunciaCreate(BaseModel):
+    tipo: str  # "topico" ou "mensagem"
+    conteudo_id: UUID
+    motivo: str
+    detalhes: Optional[str] = Field(default=None, max_length=500)
+
+
+class DenunciaResolucao(BaseModel):
+    acao: str  # "ignorar" ou "remover"
+
+
+class DenunciaResponse(BaseModel):
+    id: UUID
+    tipo: str
+    motivo: str
+    detalhes: Optional[str] = None
+    status: str
+    criada_em: datetime
+    resolvida_em: Optional[datetime] = None
+    denunciante: str
+    conteudo: str  # prévia do conteúdo denunciado (título ou texto)
+    autor_conteudo: str  # nome real de quem postou (visível só para moderação)
+    topico_id: Optional[UUID] = None
+    mensagem_id: Optional[UUID] = None

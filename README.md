@@ -4,7 +4,9 @@
 
 Aplicação web para acompanhamento da gestação. O projeto reúne uma interface web em React e uma API em Python com FastAPI. A tela de cadastro inclui informação sobre a DUM (Data da Última Menstruação), utilizada como referência no contexto do acompanhamento gestacional.
 
-> **Atenção:** o GestUP é uma ferramenta informativa e não substitui consultas, exames ou orientações de profissionais de saúde.
+O **Fórum** é o espaço onde as gestantes tiram dúvidas entre si: cada uma publica perguntas (com opção de anônimo) em categorias como trimestre, alimentação e emocional, responde as perguntas das outras, curta publicações e denuncia conteúdos inadequados para a moderação.
+
+> **Atenção:** o GestUP é uma ferramenta informativa e não substitui consultas, exames ou orientações de profissionais de saúde. As respostas do fórum vêm de outras gestantes e não são orientação médica.
 
 ## Acesso
 
@@ -98,7 +100,18 @@ npm run build
 
 ## Testes
 
-Os testes do backend estão organizados em `backend/tests/`. Consulte os arquivos do projeto para identificar os comandos e requisitos de execução configurados para cada teste.
+Os testes do backend estão organizados em `backend/tests/`. Para rodá-los, na pasta `backend` e com o ambiente virtual ativado:
+
+```bash
+pip install -r requirements.txt pytest httpx
+python -m pytest tests/
+```
+
+Os testes do fórum (`tests/test_forum.py`) cobrem perguntas anônimas, categorias, curtidas, edição/exclusão do próprio conteúdo, denúncias e o painel de moderação.
+
+## Moderação do fórum
+
+A conta de moderação é definida pela variável de ambiente `ADMIN_EMAILS` (e-mails separados por vírgula). No startup da API, essas contas recebem o papel `admin`, que dá acesso ao painel de denúncias em `/moderacao`, onde é possível remover ou ignorar conteúdos denunciados. As perguntas anônimas têm o nome da autora visível apenas para a própria e para a moderação.
 
 ## Contribuição
 

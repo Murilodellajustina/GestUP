@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.models.db_model import Base
 from app.database import get_db
+from sqlalchemy import func, inspect as sa_inspect, or_, text
 from sqlalchemy.orm import Session, joinedload, selectinload
 from app.models.db_model import Usuario
 from app.schemas.schemas import UsuarioCadastro
@@ -13,6 +14,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 import os
 import uuid
+from typing import Optional
 from uuid import UUID
 from datetime import date, datetime, timedelta
 from contextlib import asynccontextmanager
@@ -21,13 +23,18 @@ import logging
 import smtplib
 from email.message import EmailMessage
 from zoneinfo import ZoneInfo
-from app.models.db_model import EventoGestacao, TopicoComunidade, MensagemComunidade
+from app.models.db_model import (
+    EventoGestacao, TopicoComunidade, MensagemComunidade,
+    CurtidaTopico, CurtidaMensagem, Denuncia,
+)
 from app.schemas.schemas import EventoGestacaoInput, EventoGestacaoResponse
 from app.models.db_model import Feedback, Configuracao
 from app.schemas.schemas import (
     UsuarioUpdate, FeedbackCreate, ConfiguracaoSchema,
-    TopicoComunidadeCreate, MensagemComunidadeCreate,
+    TopicoComunidadeCreate, TopicoComunidadeUpdate, MensagemComunidadeCreate, MensagemComunidadeUpdate,
     TopicoComunidadeResponse, MensagemComunidadeResponse,
+    CATEGORIAS_FORUM, MOTIVOS_DENUNCIA,
+    DenunciaCreate, DenunciaResolucao, DenunciaResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -84,9 +91,39 @@ def enviar_lembretes_pendentes():
 app = FastAPI(title="API Gestup")
 
 
+def _adicionar_coluna_se_faltar(tabela: str, coluna: str, ddl: str):
+    """Migração leve para bancos existentes: adiciona a coluna só se ela ainda não existir."""
+    inspetor = sa_inspect(engine)
+    if inspetor.has_table(tabela) and coluna not in [c["name"] for c in inspetor.get_columns(tabela)]:
+        with engine.begin() as conexao:
+            conexao.execute(text(ddl))
+
+
+def _promover_admins():
+    """Promove a moderação as contas cujo e-mail está na variável ADMIN_EMAILS (separados por vírgula)."""
+    emails = [email.strip().lower() for email in os.getenv("ADMIN_EMAILS", "").split(",") if email.strip()]
+    if not emails:
+        return
+    if not sa_inspect(engine).has_table(Usuario.__tablename__):
+        return
+    db = next(get_db())
+    try:
+        db.query(Usuario).filter(func.lower(Usuario.email).in_(emails)).update(
+            {"papel": "admin"}, synchronize_session=False
+        )
+        db.commit()
+    finally:
+        db.close()
+
+
 @app.on_event("startup")
-def criar_tabelas_comunidade():
-    Base.metadata.create_all(bind=engine, tables=[TopicoComunidade.__table__, MensagemComunidade.__table__])
+def preparar_banco_forum():
+    # Cria as tabelas que faltarem (novas do fórum ou de um banco recém-criado)
+    Base.metadata.create_all(bind=engine)
+    _adicionar_coluna_se_faltar("usuarios", "papel", "ALTER TABLE usuarios ADD COLUMN papel VARCHAR(20) NOT NULL DEFAULT 'gestante'")
+    _adicionar_coluna_se_faltar("topicos_comunidade", "categoria", "ALTER TABLE topicos_comunidade ADD COLUMN categoria VARCHAR(30) NOT NULL DEFAULT 'outros'")
+    _adicionar_coluna_se_faltar("topicos_comunidade", "anonima", "ALTER TABLE topicos_comunidade ADD COLUMN anonima BOOLEAN NOT NULL DEFAULT FALSE")
+    _promover_admins()
 
 
 
@@ -162,10 +199,11 @@ def login(
 
     return {
         "mensagem": "Login realizado com sucesso!",
-        "access_token": access_token, 
+        "access_token": access_token,
         "usuario": {
             "id": str(usuario.id),
-            "nome": usuario.nome
+            "nome": usuario.nome,
+            "papel": usuario.papel
         }
         }
 
@@ -264,32 +302,71 @@ def excluir_evento(evento_id: UUID, db: Session = Depends(get_db), current_user:
     db.commit()
 
 
+def _eh_admin(usuario: Usuario) -> bool:
+    return usuario.papel == "admin"
+
+
+def exigir_admin(usuario: Usuario):
+    if not _eh_admin(usuario):
+        raise HTTPException(status_code=403, detail="Acesso restrito à moderação.")
+
+
+def _serializar_mensagem(mensagem: MensagemComunidade, current_user: Usuario) -> dict:
+    return {
+        "id": mensagem.id,
+        "texto": mensagem.texto,
+        "autor": mensagem.autor.nome,
+        "criado_em": mensagem.criado_em,
+        "sou_autor": mensagem.usuario_id == current_user.id,
+        "curtidas": len(mensagem.curtidas),
+        "curtiu": any(curtida.usuario_id == current_user.id for curtida in mensagem.curtidas),
+    }
+
+
+def _serializar_topico(topico: TopicoComunidade, current_user: Usuario) -> dict:
+    sou_autor = topico.usuario_id == current_user.id
+    eh_admin = _eh_admin(current_user)
+    # Pergunta anônima: as outras usuárias veem "Anônima"; a autora e a moderação veem o nome real.
+    anonima_para_mim = topico.anonima and not sou_autor and not eh_admin
+    return {
+        "id": topico.id,
+        "titulo": topico.titulo,
+        "mensagem_inicial": topico.mensagem_inicial,
+        "categoria": topico.categoria,
+        "anonima": topico.anonima,
+        "autor": "Anônima" if anonima_para_mim else topico.autor.nome,
+        "autor_real": topico.autor.nome if topico.anonima and eh_admin and not sou_autor else None,
+        "criado_em": topico.criado_em,
+        "sou_autor": sou_autor,
+        "curtidas": len(topico.curtidas),
+        "curtiu": any(curtida.usuario_id == current_user.id for curtida in topico.curtidas),
+        "mensagens": [_serializar_mensagem(mensagem, current_user) for mensagem in topico.mensagens],
+    }
+
+
 @app.get("/comunidade/topicos", response_model=list[TopicoComunidadeResponse])
-def listar_topicos_comunidade(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
-    topicos = (
-        db.query(TopicoComunidade)
-        .options(
-            joinedload(TopicoComunidade.autor),
-            selectinload(TopicoComunidade.mensagens).joinedload(MensagemComunidade.autor),
-        )
-        .order_by(TopicoComunidade.criado_em.desc())
-        .limit(100)
-        .all()
+def listar_topicos_comunidade(
+    categoria: Optional[str] = None,
+    busca: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    consulta = db.query(TopicoComunidade).options(
+        joinedload(TopicoComunidade.autor),
+        selectinload(TopicoComunidade.curtidas),
+        selectinload(TopicoComunidade.mensagens).joinedload(MensagemComunidade.autor),
+        selectinload(TopicoComunidade.mensagens).selectinload(MensagemComunidade.curtidas),
     )
-    return [
-        {
-            "id": topico.id,
-            "titulo": topico.titulo,
-            "mensagem_inicial": topico.mensagem_inicial,
-            "autor": topico.autor.nome,
-            "criado_em": topico.criado_em,
-            "mensagens": [
-                {"id": mensagem.id, "texto": mensagem.texto, "autor": mensagem.autor.nome, "criado_em": mensagem.criado_em}
-                for mensagem in topico.mensagens
-            ],
-        }
-        for topico in topicos
-    ]
+    if categoria and categoria != "todos":
+        consulta = consulta.filter(TopicoComunidade.categoria == categoria)
+    if busca and busca.strip():
+        termo = f"%{busca.strip()}%"
+        consulta = consulta.filter(or_(
+            TopicoComunidade.titulo.ilike(termo),
+            TopicoComunidade.mensagem_inicial.ilike(termo),
+        ))
+    topicos = consulta.order_by(TopicoComunidade.criado_em.desc()).limit(100).all()
+    return [_serializar_topico(topico, current_user) for topico in topicos]
 
 
 @app.post("/comunidade/topicos", response_model=TopicoComunidadeResponse, status_code=status.HTTP_201_CREATED)
@@ -302,22 +379,65 @@ def criar_topico_comunidade(
     mensagem_inicial = dados.mensagem.strip()
     if len(titulo) < 4 or not mensagem_inicial:
         raise HTTPException(status_code=422, detail="Informe um título e uma mensagem para iniciar o tópico.")
+    if dados.categoria not in CATEGORIAS_FORUM:
+        raise HTTPException(status_code=422, detail="Categoria inválida.")
     topico = TopicoComunidade(
         usuario_id=current_user.id,
         titulo=titulo,
         mensagem_inicial=mensagem_inicial,
+        categoria=dados.categoria,
+        anonima=dados.anonima,
     )
     db.add(topico)
     db.commit()
     db.refresh(topico)
-    return {
-        "id": topico.id,
-        "titulo": topico.titulo,
-        "mensagem_inicial": topico.mensagem_inicial,
-        "autor": current_user.nome,
-        "criado_em": topico.criado_em,
-        "mensagens": [],
-    }
+    return _serializar_topico(topico, current_user)
+
+
+@app.put("/comunidade/topicos/{topico_id}", response_model=TopicoComunidadeResponse)
+def atualizar_topico_comunidade(
+    topico_id: UUID,
+    dados: TopicoComunidadeUpdate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    topico = db.query(TopicoComunidade).filter(TopicoComunidade.id == topico_id).first()
+    if not topico:
+        raise HTTPException(status_code=404, detail="Tópico não encontrado.")
+    if topico.usuario_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Você só pode editar as suas perguntas.")
+    if dados.titulo is not None:
+        titulo = dados.titulo.strip()
+        if len(titulo) < 4:
+            raise HTTPException(status_code=422, detail="O título precisa ter pelo menos 4 caracteres.")
+        topico.titulo = titulo
+    if dados.mensagem is not None:
+        mensagem = dados.mensagem.strip()
+        if not mensagem:
+            raise HTTPException(status_code=422, detail="A mensagem não pode ficar vazia.")
+        topico.mensagem_inicial = mensagem
+    if dados.categoria is not None:
+        if dados.categoria not in CATEGORIAS_FORUM:
+            raise HTTPException(status_code=422, detail="Categoria inválida.")
+        topico.categoria = dados.categoria
+    db.commit()
+    db.refresh(topico)
+    return _serializar_topico(topico, current_user)
+
+
+@app.delete("/comunidade/topicos/{topico_id}", status_code=status.HTTP_204_NO_CONTENT)
+def excluir_topico_comunidade(
+    topico_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    topico = db.query(TopicoComunidade).filter(TopicoComunidade.id == topico_id).first()
+    if not topico:
+        raise HTTPException(status_code=404, detail="Tópico não encontrado.")
+    if topico.usuario_id != current_user.id and not _eh_admin(current_user):
+        raise HTTPException(status_code=403, detail="Você só pode excluir as suas perguntas.")
+    db.delete(topico)
+    db.commit()
 
 
 @app.post(
@@ -341,7 +461,209 @@ def criar_mensagem_comunidade(
     db.add(mensagem)
     db.commit()
     db.refresh(mensagem)
-    return {"id": mensagem.id, "texto": mensagem.texto, "autor": current_user.nome, "criado_em": mensagem.criado_em}
+    return _serializar_mensagem(mensagem, current_user)
+
+
+def _buscar_mensagem_da_rota(mensagem_id: UUID, db: Session) -> MensagemComunidade:
+    mensagem = db.query(MensagemComunidade).filter(MensagemComunidade.id == mensagem_id).first()
+    if not mensagem:
+        raise HTTPException(status_code=404, detail="Mensagem não encontrada.")
+    return mensagem
+
+
+@app.put("/comunidade/mensagens/{mensagem_id}", response_model=MensagemComunidadeResponse)
+def atualizar_mensagem_comunidade(
+    mensagem_id: UUID,
+    dados: MensagemComunidadeUpdate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    mensagem = _buscar_mensagem_da_rota(mensagem_id, db)
+    if mensagem.usuario_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Você só pode editar as suas respostas.")
+    if dados.texto is not None:
+        texto = dados.texto.strip()
+        if not texto:
+            raise HTTPException(status_code=422, detail="A resposta não pode ficar vazia.")
+        mensagem.texto = texto
+    db.commit()
+    db.refresh(mensagem)
+    return _serializar_mensagem(mensagem, current_user)
+
+
+@app.delete("/comunidade/mensagens/{mensagem_id}", status_code=status.HTTP_204_NO_CONTENT)
+def excluir_mensagem_comunidade(
+    mensagem_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    mensagem = _buscar_mensagem_da_rota(mensagem_id, db)
+    if mensagem.usuario_id != current_user.id and not _eh_admin(current_user):
+        raise HTTPException(status_code=403, detail="Você só pode excluir as suas respostas.")
+    db.delete(mensagem)
+    db.commit()
+
+
+@app.post("/comunidade/topicos/{topico_id}/curtir")
+def curtir_topico_comunidade(
+    topico_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    topico = db.query(TopicoComunidade).filter(TopicoComunidade.id == topico_id).first()
+    if not topico:
+        raise HTTPException(status_code=404, detail="Tópico não encontrado.")
+    curtida = db.query(CurtidaTopico).filter(
+        CurtidaTopico.topico_id == topico.id,
+        CurtidaTopico.usuario_id == current_user.id,
+    ).first()
+    if curtida:
+        db.delete(curtida)
+        db.commit()
+        curtiu = False
+    else:
+        db.add(CurtidaTopico(topico_id=topico.id, usuario_id=current_user.id))
+        db.commit()
+        curtiu = True
+    total = db.query(func.count(CurtidaTopico.id)).filter(CurtidaTopico.topico_id == topico.id).scalar()
+    return {"curtiu": curtiu, "curtidas": total}
+
+
+@app.post("/comunidade/mensagens/{mensagem_id}/curtir")
+def curtir_mensagem_comunidade(
+    mensagem_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    mensagem = _buscar_mensagem_da_rota(mensagem_id, db)
+    curtida = db.query(CurtidaMensagem).filter(
+        CurtidaMensagem.mensagem_id == mensagem.id,
+        CurtidaMensagem.usuario_id == current_user.id,
+    ).first()
+    if curtida:
+        db.delete(curtida)
+        db.commit()
+        curtiu = False
+    else:
+        db.add(CurtidaMensagem(mensagem_id=mensagem.id, usuario_id=current_user.id))
+        db.commit()
+        curtiu = True
+    total = db.query(func.count(CurtidaMensagem.id)).filter(CurtidaMensagem.mensagem_id == mensagem.id).scalar()
+    return {"curtiu": curtiu, "curtidas": total}
+
+
+@app.post("/comunidade/denuncias", status_code=status.HTTP_201_CREATED)
+def criar_denuncia(
+    dados: DenunciaCreate,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    if dados.tipo not in {"topico", "mensagem"}:
+        raise HTTPException(status_code=422, detail="Tipo de denúncia inválido.")
+    if dados.motivo not in MOTIVOS_DENUNCIA:
+        raise HTTPException(status_code=422, detail="Motivo da denúncia inválido.")
+
+    topico_id = None
+    mensagem_id = None
+    if dados.tipo == "topico":
+        topico = db.query(TopicoComunidade).filter(TopicoComunidade.id == dados.conteudo_id).first()
+        if not topico:
+            raise HTTPException(status_code=404, detail="Conteúdo não encontrado.")
+        topico_id = topico.id
+    else:
+        mensagem = db.query(MensagemComunidade).filter(MensagemComunidade.id == dados.conteudo_id).first()
+        if not mensagem:
+            raise HTTPException(status_code=404, detail="Conteúdo não encontrado.")
+        topico_id = mensagem.topico_id
+        mensagem_id = mensagem.id
+
+    duplicada = db.query(Denuncia).filter(
+        Denuncia.usuario_id == current_user.id,
+        Denuncia.tipo == dados.tipo,
+        Denuncia.topico_id == topico_id,
+        Denuncia.mensagem_id == mensagem_id,
+    ).first()
+    if duplicada:
+        raise HTTPException(status_code=409, detail="Você já denunciou este conteúdo.")
+
+    denuncia = Denuncia(
+        tipo=dados.tipo,
+        topico_id=topico_id,
+        mensagem_id=mensagem_id,
+        usuario_id=current_user.id,
+        motivo=dados.motivo,
+        detalhes=(dados.detalhes or "").strip() or None,
+    )
+    db.add(denuncia)
+    db.commit()
+    db.refresh(denuncia)
+    return {"mensagem": "Denúncia registrada. Nossa moderação vai analisar."}
+
+
+def _serializar_denuncia(denuncia: Denuncia) -> dict:
+    conteudo = "(conteúdo removido)"
+    autor_conteudo = ""
+    if denuncia.tipo == "topico" and denuncia.topico:
+        conteudo = denuncia.topico.titulo
+        autor_conteudo = denuncia.topico.autor.nome
+    elif denuncia.mensagem:
+        conteudo = denuncia.mensagem.texto
+        autor_conteudo = denuncia.mensagem.autor.nome
+    return {
+        "id": denuncia.id,
+        "tipo": denuncia.tipo,
+        "motivo": denuncia.motivo,
+        "detalhes": denuncia.detalhes,
+        "status": denuncia.status,
+        "criada_em": denuncia.criada_em,
+        "resolvida_em": denuncia.resolvida_em,
+        "denunciante": denuncia.denunciante.nome,
+        "conteudo": conteudo,
+        "autor_conteudo": autor_conteudo,
+        "topico_id": denuncia.topico_id,
+        "mensagem_id": denuncia.mensagem_id,
+    }
+
+
+@app.get("/moderacao/denuncias", response_model=list[DenunciaResponse])
+def listar_denuncias(
+    status_filtro: Optional[str] = "pendente",
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    exigir_admin(current_user)
+    consulta = db.query(Denuncia)
+    if status_filtro and status_filtro != "todas":
+        consulta = consulta.filter(Denuncia.status == status_filtro)
+    denuncias = consulta.order_by(Denuncia.criada_em.desc()).limit(200).all()
+    return [_serializar_denuncia(denuncia) for denuncia in denuncias]
+
+
+@app.post("/moderacao/denuncias/{denuncia_id}/resolver", response_model=DenunciaResponse)
+def resolver_denuncia(
+    denuncia_id: UUID,
+    dados: DenunciaResolucao,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user),
+):
+    exigir_admin(current_user)
+    if dados.acao not in {"ignorar", "remover"}:
+        raise HTTPException(status_code=422, detail="Ação inválida: use ignorar ou remover.")
+    denuncia = db.query(Denuncia).filter(Denuncia.id == denuncia_id).first()
+    if not denuncia:
+        raise HTTPException(status_code=404, detail="Denúncia não encontrada.")
+    if denuncia.status == "resolvida":
+        raise HTTPException(status_code=400, detail="Esta denúncia já foi resolvida.")
+    if dados.acao == "remover":
+        if denuncia.tipo == "topico" and denuncia.topico:
+            db.delete(denuncia.topico)
+        elif denuncia.mensagem:
+            db.delete(denuncia.mensagem)
+    denuncia.status = "resolvida"
+    denuncia.resolvida_em = datetime.utcnow()
+    db.commit()
+    db.refresh(denuncia)
+    return _serializar_denuncia(denuncia)
 
 @app.put("/usuarios/{usuario_id}", response_model=UsuarioResponse)
 def atualizar_usuario(
