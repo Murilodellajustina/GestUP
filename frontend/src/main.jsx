@@ -14,6 +14,7 @@ import TelaInicial from './pages/telaInicial'
 import TelaGestacao from './pages/telaGestacao'
 import TelaConsultas from './pages/telaConsultas'
 import TelaConteudos from './pages/telaConteudos'
+import TelaComunidade from './pages/telaComunidade'
 import TelaPerfil from './pages/telaPerfil'
 import TelaSintomas from './pages/telaSintomas'
 import TelaSobre from './pages/telaSobre'
@@ -39,6 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/gestacao" element={<TelaGestacao />} />
               <Route path="/consultas" element={<TelaConsultas />} />
               <Route path="/conteudos" element={<TelaConteudos />} />
+              <Route path="/comunidade" element={<TelaComunidade />} />
               <Route path="/perfil" element={<TelaPerfil />} />
               <Route path="/sintomas" element={<TelaSintomas />} />
               <Route path="/sobre" element={<TelaSobre />} />

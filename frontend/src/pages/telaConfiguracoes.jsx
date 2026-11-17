@@ -10,9 +10,13 @@ export default function TelaConfiguracoes() {
     document.documentElement.setAttribute('data-bs-theme', tema);
     localStorage.setItem('temaGestUp', tema);
   };
+  const aplicarTextoGrande = (ativo) => {
+    document.documentElement.setAttribute('data-texto-grande', ativo ? 'true' : 'false');
+    localStorage.setItem('textoGrandeGestUp', String(ativo));
+  };
   const [configs, setConfigs] = useState({
     modoNoturno: localStorage.getItem('temaGestUp') === 'dark',
-    textoGrande: false,
+    textoGrande: localStorage.getItem('textoGrandeGestUp') === 'true',
     notificacoesPush: true,
     lembretesEmail: false
   });
@@ -22,13 +26,15 @@ export default function TelaConfiguracoes() {
     buscarConfiguracoesBackend()
       .then((data) => {
         if (data) {
+          const textoGrande = data.textoGrande ?? localStorage.getItem('textoGrandeGestUp') === 'true';
           setConfigs({
             modoNoturno: data.modoNoturno ?? false,
-            textoGrande: data.textoGrande ?? false,
+            textoGrande,
             notificacoesPush: data.notificacoesPush ?? true,
             lembretesEmail: data.lembretesEmail ?? false
           });
           aplicarTema(data.modoNoturno ?? false);
+          aplicarTextoGrande(textoGrande);
         }
       })
       .catch(console.error)
@@ -40,11 +46,12 @@ export default function TelaConfiguracoes() {
     setConfigs(novasConfigs);
 
     if (chave === 'modoNoturno') aplicarTema(novasConfigs.modoNoturno);
+    if (chave === 'textoGrande') aplicarTextoGrande(novasConfigs.textoGrande);
     try {
       await salvarConfiguracoesBackend(novasConfigs);
     } catch (error) {
       console.error("Erro ao salvar configuração:", error);
-      setConfigs(configs);
+      if (chave !== 'textoGrande') setConfigs(configs);
     }
   };
 

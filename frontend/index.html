@@ -17,6 +17,10 @@
       'data-bs-theme',
       localStorage.getItem('temaGestUp') || 'light'
     );
+    document.documentElement.setAttribute(
+      'data-texto-grande',
+      localStorage.getItem('textoGrandeGestUp') === 'true' ? 'true' : 'false'
+    );
   </script>
 </body>
 
