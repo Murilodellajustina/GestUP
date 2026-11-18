@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Baby, CalendarDays, BookOpen, User, MessageCircle } from 'lucide-react';
+import { Home, Baby, CalendarDays, MessagesSquare, User } from 'lucide-react';
 import logo from '../imgs/Logo.png';
 
 export default function BottomNav() {
@@ -12,9 +12,8 @@ export default function BottomNav() {
     { id: '/home', icon: Home, label: 'Início' },
     { id: '/gestacao', icon: Baby, label: 'Gestação' },
     { id: '/consultas', icon: CalendarDays, label: 'Calendário' },
-    { id: '/conteudos', icon: BookOpen, label: 'Conteúdos' },
+    { id: '/forum', icon: MessagesSquare, label: 'GesBlog' },
     { id: '/perfil', icon: User, label: 'Perfil' },
-    { id: '/comunidade', icon: MessageCircle, label: 'GesBlog' },
   ];
 
   return (

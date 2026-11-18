@@ -26,6 +26,7 @@ export async function login(email, senha) {
         const data = await response.json();
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("usuario_id", data.usuario.id);
+        localStorage.setItem("papel", data.usuario.papel || "gestante");
         return data;
     } else {
         const erro = await response.json();
@@ -176,7 +177,7 @@ export const excluirEventoGestacao = (id) => requisicaoEventos(`/${id}`, { metho
 
 async function requisicaoComunidade(path = '', options = {}) {
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('Entre na sua conta para participar da comunidade.');
+    if (!token) throw new Error('Entre na sua conta para participar do GesBlog.');
     const response = await fetch(`${API_URL}/comunidade${path}`, {
         ...options,
         headers: {
@@ -186,16 +187,61 @@ async function requisicaoComunidade(path = '', options = {}) {
         }
     });
     const dados = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação na comunidade.');
+    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação no GesBlog.');
     return dados;
 }
 
-export const listarTopicosComunidade = () => requisicaoComunidade('/topicos');
-export const criarTopicoComunidade = (topico) => requisicaoComunidade('/topicos', {
+// Categorias e motivos precisam ser iguais aos aceitos pelo backend
+export const CATEGORIAS_FORUM = ['1º trimestre', '2º trimestre', '3º trimestre', 'pós-parto', 'alimentação', 'emocional', 'outros'];
+export const MOTIVOS_DENUNCIA = ['conteúdo ofensivo', 'desinformação', 'assédio ou constrangimento', 'spam', 'outro'];
+
+export const souModeradora = () => localStorage.getItem('papel') === 'admin';
+
+export const listarPerguntasForum = () => requisicaoComunidade('/topicos');
+export const criarPerguntaForum = (dados) => requisicaoComunidade('/topicos', {
     method: 'POST',
-    body: JSON.stringify(topico)
+    body: JSON.stringify(dados)
 });
-export const enviarMensagemComunidade = (topicoId, texto) => requisicaoComunidade(`/topicos/${topicoId}/mensagens`, {
+export const atualizarPerguntaForum = (id, dados) => requisicaoComunidade(`/topicos/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dados)
+});
+export const excluirPerguntaForum = (id) => requisicaoComunidade(`/topicos/${id}`, { method: 'DELETE' });
+export const enviarRespostaForum = (perguntaId, texto) => requisicaoComunidade(`/topicos/${perguntaId}/mensagens`, {
     method: 'POST',
     body: JSON.stringify({ texto })
+});
+export const excluirRespostaForum = (id) => requisicaoComunidade(`/mensagens/${id}`, { method: 'DELETE' });
+export const atualizarRespostaForum = (id, dados) => requisicaoComunidade(`/mensagens/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dados)
+});
+export const curtirPerguntaForum = (id) => requisicaoComunidade(`/topicos/${id}/curtir`, { method: 'POST' });
+export const curtirRespostaForum = (id) => requisicaoComunidade(`/mensagens/${id}/curtir`, { method: 'POST' });
+export const denunciarConteudoForum = (dados) => requisicaoComunidade('/denuncias', {
+    method: 'POST',
+    body: JSON.stringify(dados)
+});
+
+async function requisicaoModeracao(path = '', options = {}) {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Entre na sua conta para acessar a moderação.');
+    const response = await fetch(`${API_URL}/moderacao${path}`, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...(options.headers || {})
+        }
+    });
+    const dados = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(dados.detail || 'Não foi possível concluir a ação na moderação.');
+    return dados;
+}
+
+export const listarDenunciasModeracao = (statusFiltro = 'pendente') =>
+    requisicaoModeracao(`/denuncias?status_filtro=${encodeURIComponent(statusFiltro)}`);
+export const resolverDenunciaModeracao = (id, acao) => requisicaoModeracao(`/denuncias/${id}/resolver`, {
+    method: 'POST',
+    body: JSON.stringify({ acao })
 });

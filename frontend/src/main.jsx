@@ -13,8 +13,8 @@ import Cadastrar from './pages/cadastro'
 import TelaInicial from './pages/telaInicial'
 import TelaGestacao from './pages/telaGestacao'
 import TelaConsultas from './pages/telaConsultas'
-import TelaConteudos from './pages/telaConteudos'
-import TelaComunidade from './pages/telaComunidade'
+import TelaForum from './pages/telaForum'
+import TelaModeracao from './pages/telaModeracao'
 import TelaPerfil from './pages/telaPerfil'
 import TelaSintomas from './pages/telaSintomas'
 import TelaSobre from './pages/telaSobre'
@@ -39,8 +39,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/home" element={<TelaInicial />} />
               <Route path="/gestacao" element={<TelaGestacao />} />
               <Route path="/consultas" element={<TelaConsultas />} />
-              <Route path="/conteudos" element={<TelaConteudos />} />
-              <Route path="/comunidade" element={<TelaComunidade />} />
+              <Route path="/forum" element={<TelaForum />} />
+              <Route path="/moderacao" element={<TelaModeracao />} />
               <Route path="/perfil" element={<TelaPerfil />} />
               <Route path="/sintomas" element={<TelaSintomas />} />
               <Route path="/sobre" element={<TelaSobre />} />
@@ -50,6 +50,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="/notificacoes" element={<TelaNotificacoes />} />
               <Route path="/configuracoes" element={<TelaConfiguracoes />} />
             </Route>
+
+            {/* Rotas antigas continuam funcionando para quem tinha link salvo */}
+            <Route path="/conteudos" element={<Navigate to="/forum" replace />} />
+            <Route path="/comunidade" element={<Navigate to="/forum" replace />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
