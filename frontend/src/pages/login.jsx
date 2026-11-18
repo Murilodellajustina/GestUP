@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { login } from "../Services/Api.js";
-import { User, Lock, Eye, Heart } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, Heart } from 'lucide-react';
 import logo from "../imgs/Logo.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogin(e) {
@@ -20,7 +21,6 @@ export default function Login() {
       navigate("/home");
     } catch (err) {
       setErro(err.message || "Credenciais inválidas.");
-      if (senha.length < 6) setErro("A senha deve ter 6 dígitos!");
       console.error(err);
     }
   }
@@ -45,30 +45,39 @@ export default function Login() {
           <div className="mb-3">
             <div className="position-relative mb-3">
               <User className="position-absolute top-50 translate-middle-y ms-3" size={20} style={{ color: '#a78bfa' }} />
-              <input 
-                type="text" 
-                placeholder="E-mail" 
+              <input
+                type="email"
+                placeholder="E-mail"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-control py-3 ps-5 border shadow-sm"
                 style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+                autoComplete="email"
+                inputMode="email"
                 required
               />
             </div>
 
             <div className="position-relative">
               <Lock className="position-absolute top-50 translate-middle-y ms-3" size={20} style={{ color: '#a78bfa' }} />
-              <input 
-                type="password" 
-                placeholder="Senha" 
+              <input
+                type={mostrarSenha ? "text" : "password"}
+                placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 className="form-control py-3 ps-5 pe-5 border shadow-sm"
                 style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+                autoComplete="current-password"
                 required
               />
-              <button type="button" className="btn position-absolute top-50 end-0 translate-middle-y border-0 text-muted">
-                <Eye size={20} />
+              <button
+                type="button"
+                className="btn position-absolute top-50 end-0 translate-middle-y border-0 text-muted"
+                onClick={() => setMostrarSenha((visivel) => !visivel)}
+                aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                aria-pressed={mostrarSenha}
+              >
+                {mostrarSenha ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>

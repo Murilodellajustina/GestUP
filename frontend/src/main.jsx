@@ -27,7 +27,7 @@ import TelaConfiguracoes from './pages/telaConfiguracoes'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <div className="vh-100 d-flex justify-content-center bg-secondary bg-opacity-10">
+      <div className="vh-100 d-flex justify-content-center bg-secondary bg-opacity-10" style={{ height: '100dvh' }}>
         <div className="bg-body h-100 position-relative d-flex flex-column overflow-hidden shadow-lg" style={{ width: '100%', maxWidth: '2000px' }}>
           
           <Routes>

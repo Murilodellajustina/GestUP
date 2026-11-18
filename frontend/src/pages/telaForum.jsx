@@ -313,7 +313,7 @@ export default function TelaForum() {
                 type="button"
                 aria-pressed={ativa}
                 onClick={() => setCategoriaAtiva(categoria)}
-                className={`btn rounded-pill px-4 py-1 fw-medium text-capitalize ${ativa ? 'text-white border-0' : 'text-secondary bg-body border'}`}
+                className={`btn rounded-pill px-3 px-sm-4 py-1 fw-medium text-capitalize ${ativa ? 'text-white border-0' : 'text-secondary bg-body border'}`}
                 style={{ backgroundColor: ativa ? '#7c3aed' : undefined, fontSize: '0.85rem', whiteSpace: 'nowrap' }}
               >
                 {categoria}

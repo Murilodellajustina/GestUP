@@ -7,13 +7,23 @@ import { enviarFeedbackAoBackend } from '../Services/Api';
 export default function TelaFeedback() {
   const [mensagem, setMensagem] = useState('');
   const [enviado, setEnviado] = useState(false);
+  const [erro, setErro] = useState('');
+  const [enviando, setEnviando] = useState(false);
   const navigate = useNavigate();
 
   const handleEnviar = async (e) => {
   e.preventDefault();
-  await enviarFeedbackAoBackend(mensagem);
-  setEnviado(true);
-  setTimeout(() => navigate('/home'), 3000);
+  setErro('');
+  setEnviando(true);
+  try {
+    await enviarFeedbackAoBackend(mensagem);
+    setEnviado(true);
+    setTimeout(() => navigate('/home'), 3000);
+  } catch (error) {
+    setErro(error.message || 'Não foi possível enviar seu feedback. Tente novamente.');
+  } finally {
+    setEnviando(false);
+  }
 };
 
   if (enviado) {
@@ -23,7 +33,7 @@ export default function TelaFeedback() {
           <MessageSquareHeart size={40} />
         </div>
         <h3 className="fw-bold" style={{ color: '#4c1d95' }}>Obrigado!</h3>
-        <p className="text-muted">Seu feedback foi enviado anonimamente e nos ajudará a melhorar o GestarUp.</p>
+        <p className="text-muted">Seu feedback foi enviado anonimamente e nos ajudará a melhorar o GestUp.</p>
       </div>
     );
   }
@@ -39,6 +49,11 @@ export default function TelaFeedback() {
         </div>
 
         <form onSubmit={handleEnviar} className="d-flex flex-column flex-grow-1">
+          {erro && (
+            <div className="alert alert-danger rounded-4 py-2 text-center shadow-sm" style={{ fontSize: '0.875rem' }} role="alert">
+              {erro}
+            </div>
+          )}
           <div className="mb-4 flex-grow-1 d-flex flex-column">
             <label className="fw-bold text-body mb-2 ms-1" style={{ fontSize: '0.9rem' }}>Deixe sua sugestão ou crítica:</label>
             <textarea 
@@ -51,12 +66,13 @@ export default function TelaFeedback() {
             ></textarea>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn w-100 py-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center gap-2 mb-3"
             style={{ backgroundColor: '#8b5cf6', borderRadius: '50px' }}
+            disabled={enviando}
           >
-            <Send size={20} /> Enviar Feedback
+            <Send size={20} /> {enviando ? 'Enviando...' : 'Enviar Feedback'}
           </button>
         </form>
       </div>
