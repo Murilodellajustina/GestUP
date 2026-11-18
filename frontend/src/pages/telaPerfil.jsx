@@ -8,25 +8,31 @@ export default function TelaPerfil() {
     const navigate = useNavigate();
 
     const [nome, setNome] = useState("Carregando...");
-    const [email, setEmail] = useState("Carregando...");
-  
+    const [email, setEmail] = useState("");
+
     useEffect(() => {
       async function carregarDados() {
         try {
           const dados = await buscarPerfilUsuario();
-          
+
           const primeiroNome = dados.nome.split(" ")[0];
           setNome(primeiroNome);
           setEmail(dados.email);
-         
-  
         } catch (error) {
           console.error("Erro ao carregar perfil:", error);
+          setNome("Gestante");
         }
       }
-  
+
       carregarDados();
     }, []);
+
+    const sairDaConta = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario_id");
+      localStorage.removeItem("papel");
+      navigate("/");
+    };
 
   return (
     <div className="d-flex flex-column h-100 bg-body-tertiary">
@@ -85,9 +91,9 @@ export default function TelaPerfil() {
       </div>
 
       <div className="px-3 mt-4 mb-4">
-        <button 
-          onClick={() => navigate('/')} 
-          className="btn bg-body w-100 py-3 fw-bold text-secondary shadow-sm" 
+        <button
+          onClick={sairDaConta}
+          className="btn bg-body w-100 py-3 fw-bold text-secondary shadow-sm"
           style={{ border: '1px solid #e5e7eb', borderRadius: '50px' }}
         >
           Sair

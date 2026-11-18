@@ -49,9 +49,9 @@ export default function TelaSintomas() {
     <div className="d-flex flex-column h-100 bg-body-tertiary">
       <TopBar titulo="Sintomas na gestação" showBack />
       <main className="px-3 px-sm-4 py-3" style={{ overflowY: 'auto', paddingBottom: 32 }}>
-        <div className="d-flex gap-2 mb-3 overflow-auto" role="tablist" aria-label="Categorias de sintomas" style={{ scrollbarWidth: 'none' }}>
+        <div className="d-flex gap-1 gap-sm-2 mb-3 overflow-auto" role="tablist" aria-label="Categorias de sintomas" style={{ scrollbarWidth: 'none' }}>
           {abas.map(({ id, label, icon: Icon }) => (
-            <button key={id} id={`aba-${id}`} role="tab" aria-selected={aba === id} aria-controls={`painel-${id}`} onClick={() => setAba(id)} className="btn rounded-pill px-3 py-2 fw-medium border-0 d-flex align-items-center gap-2" style={{ backgroundColor: aba === id ? (id === 'alerta' ? '#dc2626' : '#7c3aed') : '#fff', color: aba === id ? '#fff' : '#6b7280', whiteSpace: 'nowrap', fontSize: '.85rem' }}>
+            <button key={id} id={`aba-${id}`} role="tab" aria-selected={aba === id} aria-controls={`painel-${id}`} onClick={() => setAba(id)} className="btn rounded-pill px-2 px-sm-3 py-2 fw-medium border-0 d-flex align-items-center gap-2" style={{ backgroundColor: aba === id ? (id === 'alerta' ? '#dc2626' : '#7c3aed') : '#fff', color: aba === id ? '#fff' : '#6b7280', whiteSpace: 'nowrap', fontSize: '.85rem' }}>
               <Icon size={16} />{label}
             </button>
           ))}

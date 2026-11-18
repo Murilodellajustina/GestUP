@@ -38,7 +38,7 @@ export default function Cadastrar() {
     }
 
     if (senha.length < 6) {
-      setErro("A senha deve ter pelo menos 6 dígitos.");
+      setErro("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
 
@@ -86,6 +86,7 @@ export default function Cadastrar() {
               onChange={(e) => setNome(e.target.value)}
               className="form-control py-3 ps-5 border shadow-sm"
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+              autoComplete="name"
               required
             />
           </div>
@@ -99,6 +100,8 @@ export default function Cadastrar() {
               onChange={handleTelefone}
               className="form-control py-3 ps-5 border shadow-sm"
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+              autoComplete="tel"
+              inputMode="tel"
               required
             />
           </div>
@@ -128,6 +131,8 @@ export default function Cadastrar() {
               onChange={(e) => setEmail(e.target.value)}
               className="form-control py-3 ps-5 border shadow-sm"
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+              autoComplete="email"
+              inputMode="email"
               required
             />
           </div>
@@ -141,6 +146,7 @@ export default function Cadastrar() {
               onChange={(e) => setSenha(e.target.value)}
               className="form-control py-3 ps-5 border shadow-sm"
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+              autoComplete="new-password"
               required
             />
           </div>
@@ -154,6 +160,7 @@ export default function Cadastrar() {
               onChange={(e) => setConfirmarSenha(e.target.value)}
               className="form-control py-3 ps-5 border shadow-sm"
               style={{ borderRadius: '20px', backgroundColor: '#f8fafc' }}
+              autoComplete="new-password"
               required
             />
           </div>

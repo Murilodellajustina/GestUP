@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Calendar, BookOpen, Activity } from 'lucide-react';
+import { Calendar, MessagesSquare, Activity } from 'lucide-react';
 import logo from '../imgs/Logo.png';
 
 export default function Landingpage() {
@@ -12,8 +12,7 @@ export default function Landingpage() {
       style={{
         backgroundImage: 'linear-gradient(rgba(76, 29, 149, 0.85), rgba(76, 29, 149, 0.95))',
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundPosition: 'center'
       }}
     >
       <div className="w-100 px-4 py-5 d-flex flex-column flex-grow-1 align-items-center justify-content-between mx-auto" style={{ maxWidth: '480px' }}>
@@ -51,10 +50,10 @@ export default function Landingpage() {
           </div>
 
           <div className="d-flex align-items-center gap-3 p-3 rounded-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
-            <BookOpen className="flex-shrink-0" size={26} color="#fbcfe8" />
+            <MessagesSquare className="flex-shrink-0" size={26} color="#fbcfe8" />
             <div>
-              <h6 className="fw-bold mb-1">Conteúdos Confiáveis</h6>
-              <p className="mb-0 small" style={{ opacity: 0.85 }}>Materiais revisados por profissionais.</p>
+              <h6 className="fw-bold mb-1">GesBlog</h6>
+              <p className="mb-0 small" style={{ opacity: 0.85 }}>Tire dúvidas com outras gestantes, com moderação.</p>
             </div>
           </div>
 
